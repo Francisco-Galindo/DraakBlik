@@ -10,7 +10,7 @@
 #include <allegro5/allegro_acodec.h>
 
 #include "util.c"
-
+// Prueba
 
 struct Jugador jugador;
 
