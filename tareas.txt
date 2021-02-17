@@ -1,1 +1,37 @@
 Tareas que debemos realizar en nuestro programa (poner un ** al principio de cada tarea para marcar que está resuelto)
+Diseño
+  **Gargola
+  Ataque de la gargola (Piedra)
+  Atque del fenix (Fuego amarillo)
+  Diseñar el cambio para las animaciones
+    Cambio para los personajes (Movimiento de las alas)
+    Exploción (Cuando mueren los personajes)
+    Movimiento de fuego en la pantalla de inicio.
+  
+ Audio
+  Pantalla de inicio (Musica de fondo y cuando seleccionemos una opcion)
+  Dragon (Cuando dispara)
+  
+Codigo
+   Programar las animaciones
+      Movimiento de loss personajes (Movimiento de las alas)
+   Programar la pantalla de inicio
+      Menu (Jugar, Créditos, Salir)
+   Programar pantalla de juego 
+     Comportamiento de los enemigos 
+        Aparicion de los enemigos
+        Movimiento de los enemigos
+          Trayectoria de los disparos
+        Colisiones (Daño a los enemigos)
+     Movimiento de fondo
+   Resgistro puntos y usuario
+     Registro de nombre de usario
+     Registro de puntaje mas alto y aparuicion en pantalla principal
+     Registro de puntaje actual
+     
+
+        
+        
+        
+      
+  
