@@ -10,7 +10,7 @@
 #include <allegro5/allegro_acodec.h>
 
 #include "util.c"
-// Prueba
+
 
 struct Jugador jugador;
 
@@ -43,7 +43,7 @@ int main()
 
     if(!al_init_font_addon() || !al_init_ttf_addon())
     {
-        printf("No se pudieronn cargar las fuentes");
+        printf("No se pudieronn cargar las fuentes lol");
         fin = 1;
     }
     
