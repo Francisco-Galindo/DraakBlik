@@ -12,7 +12,7 @@
 #include "util.c"
 
 
-struct Jugador jugador;
+struct Entidad jugador;
 
 
 
@@ -163,10 +163,7 @@ int main()
             case ALLEGRO_EVENT_KEY_CHAR:
                 if(evento.keyboard.keycode == ALLEGRO_KEY_SPACE)
                 {
-                    if (pausa == 1)
-                        pausa = 0;
-                    else
-                        pausa = 1;
+                    pausa = !pausa;
                 }
                 break;
             case ALLEGRO_EVENT_KEY_DOWN:

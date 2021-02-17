@@ -23,30 +23,32 @@
 #define BLOQUEO 2
 #define ELIMINAR 3
 
-struct Jugador
+struct Entidad
 {
     ALLEGRO_BITMAP *sprite;
     float x_pos;
     float y_pos;
     int vel;
+    float vidas;
     int mov_arr;
     int mov_aba;
     int mov_izq;
     int mov_der;
 };
 
-void inicializar_jugador(struct Jugador jugador)
+void inicializar_jugador(struct Entidad jugador)
 {
     jugador.x_pos = 0;
     jugador.y_pos = 0;
     jugador.vel = 0;
+    jugador.vidas = 3;
     jugador.mov_arr = 0;
     jugador.mov_aba = 0;
     jugador.mov_der = 0;
     jugador.mov_izq =0;
 }
 
-void dibujar_jugador(struct Jugador jugador, float x, float y)
+void dibujar_jugador(struct Entidad jugador, float x, float y)
 {
     al_draw_scaled_bitmap(jugador.sprite, 0, 0, al_get_bitmap_width(jugador.sprite), al_get_bitmap_height(jugador.sprite), x, y, al_get_bitmap_width(jugador.sprite)*1, al_get_bitmap_height(jugador.sprite)*1, 0);
 }
