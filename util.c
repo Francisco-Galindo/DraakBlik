@@ -51,19 +51,19 @@ void dibujar_jugador(struct Jugador jugador, float x, float y)
     al_draw_scaled_bitmap(jugador.sprite, 0, 0, al_get_bitmap_width(jugador.sprite), al_get_bitmap_height(jugador.sprite), x, y, al_get_bitmap_width(jugador.sprite)*1, al_get_bitmap_height(jugador.sprite)*1, 0);
 }
 
-void mover_entidad(float *x_pos, float *y_pos, int delta, int direccion, int comportamiento)
+int mover_entidad(float *x_pos, float *y_pos, int delta, int direccion, int comportamiento)
 {
     switch (direccion)
     {
     case ARRIBA:
         *y_pos -= delta;
         if (*y_pos < -10)
-            *y_pos = -10;
+            *y_pos = -10;     
         break;
     case ABAJO:
         *y_pos += delta;
         if (*y_pos > ALTO-54)
-            *y_pos = ALTO-54; 
+            *y_pos = ALTO-54;
         break;
     case IZQUIERDA:
         *x_pos -= delta;
@@ -76,4 +76,5 @@ void mover_entidad(float *x_pos, float *y_pos, int delta, int direccion, int com
             *x_pos = ANCHO-54; 
         break;
     }
+    return 1;
 }

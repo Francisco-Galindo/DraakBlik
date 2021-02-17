@@ -170,38 +170,38 @@ int main()
                 }
                 break;
             case ALLEGRO_EVENT_KEY_DOWN:
-                if(evento.keyboard.keycode == ALLEGRO_KEY_W)
+                if(evento.keyboard.keycode == ALLEGRO_KEY_W || evento.keyboard.keycode == ALLEGRO_KEY_UP)
                 {
                     jugador.mov_arr = 1;
                 }
-                else if (evento.keyboard.keycode == ALLEGRO_KEY_S)
+                else if (evento.keyboard.keycode == ALLEGRO_KEY_S || evento.keyboard.keycode == ALLEGRO_KEY_DOWN)
                 {
                     jugador.mov_aba = 1;
                 }
-                if (evento.keyboard.keycode == ALLEGRO_KEY_A) 
+                if (evento.keyboard.keycode == ALLEGRO_KEY_A || evento.keyboard.keycode == ALLEGRO_KEY_LEFT) 
                 {
                     jugador.mov_izq = 1;
                 }
-                else if (evento.keyboard.keycode == ALLEGRO_KEY_D) 
+                else if (evento.keyboard.keycode == ALLEGRO_KEY_D || evento.keyboard.keycode == ALLEGRO_KEY_RIGHT) 
                 {
                     jugador.mov_der = 1;
                 }
                 break;
             case ALLEGRO_EVENT_KEY_UP:
                 
-                if(evento.keyboard.keycode == ALLEGRO_KEY_W)
+                if(evento.keyboard.keycode == ALLEGRO_KEY_W || evento.keyboard.keycode == ALLEGRO_KEY_UP)
                 {
                     jugador.mov_arr = 0;
                 }
-                else if (evento.keyboard.keycode == ALLEGRO_KEY_S)
+                else if (evento.keyboard.keycode == ALLEGRO_KEY_S || evento.keyboard.keycode == ALLEGRO_KEY_DOWN)
                 {
                     jugador.mov_aba = 0;
                 }
-                if (evento.keyboard.keycode == ALLEGRO_KEY_A) 
+                if (evento.keyboard.keycode == ALLEGRO_KEY_A || evento.keyboard.keycode == ALLEGRO_KEY_LEFT)
                 {
                     jugador.mov_izq = 0;
                 }
-                else if (evento.keyboard.keycode == ALLEGRO_KEY_D) 
+                else if (evento.keyboard.keycode == ALLEGRO_KEY_D || evento.keyboard.keycode == ALLEGRO_KEY_RIGHT) 
                 {
                     jugador.mov_der = 0;
                 }
