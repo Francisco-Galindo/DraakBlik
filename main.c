@@ -128,7 +128,7 @@ int main()
             redibujar = 0;
 
         }
-
+        // Cambios
         // Checamos si hay un evento
         al_wait_for_event(eventos, &evento);
 
