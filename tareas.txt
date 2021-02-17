@@ -10,6 +10,7 @@ Diseño
   
  Audio
   Pantalla de inicio (Musica de fondo y cuando seleccionemos una opcion)
+  Pantalla de juego (Musica de fondo y cuando hagamos daño)
   Dragon (Cuando dispara)
   
 Codigo
