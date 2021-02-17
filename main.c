@@ -14,8 +14,6 @@
 
 struct Entidad jugador;
 
-
-
 int main()
 {
     ALLEGRO_DISPLAY *disp;
@@ -111,7 +109,7 @@ int main()
     al_register_event_source(eventos, al_get_keyboard_event_source());
     al_register_event_source(eventos, al_get_timer_event_source(timer));
 
-    inicializar_jugador(jugador);
+    inicializar_entidad(jugador, JUGADOR, NULL);
     al_start_timer(timer);
     al_flip_display();
 
@@ -121,7 +119,7 @@ int main()
         {
             al_clear_to_color(color_fondo);
 
-            dibujar_jugador(jugador, jugador.x_pos, jugador.y_pos);
+            dibujar_entidad(jugador, jugador.x_pos, jugador.y_pos);
             if (pausa == 1)
                 al_draw_text(fuente80, al_map_rgb(255, 255, 255), ANCHO/2, ALTO/2, ALLEGRO_ALIGN_CENTRE, "PAUSA");
 

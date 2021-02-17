@@ -23,6 +23,14 @@
 #define BLOQUEO 2
 #define ELIMINAR 3
 
+#define JUGADOR 1
+#define PROYECTIL_JUGADOR 2
+#define MANTICORA 3
+#define PROYECTIL_MANTICORA 4
+#define FENIX 5
+#define PROYECTIL_FENIX 6
+
+// Declaración de la estructura de una entidad, en la que se basan todos los personajes y proyectiles del juego
 struct Entidad
 {
     ALLEGRO_BITMAP *sprite;
@@ -36,23 +44,44 @@ struct Entidad
     int mov_der;
 };
 
-void inicializar_jugador(struct Entidad jugador)
+// Se encarga de inicializar una entidad, el primer argumento es la entidad que se quiere inicializar; el segundo representa qué tipo de entidad es; el tercero es un apuntador a otra entidad de referencia, en caso de ser necesario
+void inicializar_entidad(struct Entidad entidad, int tipo, struct Entidad *entidad_origen)
 {
-    jugador.x_pos = 0;
-    jugador.y_pos = 0;
-    jugador.vel = 0;
-    jugador.vidas = 3;
-    jugador.mov_arr = 0;
-    jugador.mov_aba = 0;
-    jugador.mov_der = 0;
-    jugador.mov_izq =0;
+    switch (tipo)
+    {
+    case JUGADOR:
+        entidad.x_pos = 0;
+        entidad.y_pos = 0;
+        entidad.vel = 0;
+        entidad.vidas = 3;
+        entidad.mov_arr = 0;
+        entidad.mov_aba = 0;
+        entidad.mov_der = 0;
+        entidad.mov_izq = 0;
+        break;
+    case PROYECTIL_JUGADOR:
+        break;
+    case MANTICORA:
+        break;
+    case PROYECTIL_MANTICORA:
+        break;
+    case FENIX:
+        break;
+    case PROYECTIL_FENIX:
+        break;
+    default:
+        break;
+    }
 }
 
-void dibujar_jugador(struct Entidad jugador, float x, float y)
+// Su tarea es dibujar una entidad dada en unas coordenadas determinadas
+void dibujar_entidad(struct Entidad entidad, float x, float y)
 {
-    al_draw_scaled_bitmap(jugador.sprite, 0, 0, al_get_bitmap_width(jugador.sprite), al_get_bitmap_height(jugador.sprite), x, y, al_get_bitmap_width(jugador.sprite)*1, al_get_bitmap_height(jugador.sprite)*1, 0);
+    al_draw_scaled_bitmap(entidad.sprite, 0, 0, al_get_bitmap_width(entidad.sprite), al_get_bitmap_height(entidad.sprite), x, y, al_get_bitmap_width(entidad.sprite)*1, al_get_bitmap_height(entidad.sprite)*1, 0);
 }
 
+// Se encarga de mover una entidad dada en cierta dirección, varias llamadas conjuntas a esta funión pueden resultar en movimientos diagonales
+// Toma como argumentos 2 apuntadores de las coordenadas de la entidad, tambien delta (su velocidad) y la direccion en la que se debe mover dicha entidad
 int mover_entidad(float *x_pos, float *y_pos, int delta, int direccion, int comportamiento)
 {
     switch (direccion)
