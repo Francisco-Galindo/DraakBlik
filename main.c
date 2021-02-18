@@ -13,6 +13,8 @@
 
 
 struct Entidad jugador;
+struct Entidad colisionable;
+
 
 int main()
 {
@@ -59,6 +61,7 @@ int main()
 
     jugador_sprite = al_load_bitmap("Imagenes/dragonopc.png");
     jugador.sprite = jugador_sprite;
+    colisionable.sprite = jugador_sprite;
     if (!jugador_sprite)
     {
         printf("No se cargaron las imagenes");
@@ -109,7 +112,10 @@ int main()
     al_register_event_source(eventos, al_get_keyboard_event_source());
     al_register_event_source(eventos, al_get_timer_event_source(timer));
 
-    inicializar_entidad(jugador, JUGADOR, NULL);
+    inicializar_entidad(&jugador, JUGADOR, NULL);
+    inicializar_entidad(&colisionable, JUGADOR, NULL);
+    colisionable.x_pos = ANCHO/2;
+    colisionable.y_pos = ALTO/2;
     al_start_timer(timer);
     al_flip_display();
 
@@ -118,8 +124,12 @@ int main()
         if (redibujar == 1 && al_event_queue_is_empty(eventos))
         {
             al_clear_to_color(color_fondo);
-
-            dibujar_entidad(jugador, jugador.x_pos, jugador.y_pos);
+            if (colisiona_AABB(jugador, colisionable))
+            {
+               al_clear_to_color(al_map_rgb(10, 120, 10)); 
+            }
+            dibujar_entidad(jugador);
+            dibujar_entidad(colisionable);
             if (pausa == 1)
                 al_draw_text(fuente80, al_map_rgb(255, 255, 255), ANCHO/2, ALTO/2, ALLEGRO_ALIGN_CENTRE, "PAUSA");
 

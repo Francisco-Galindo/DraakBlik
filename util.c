@@ -40,6 +40,8 @@ struct Entidad
     float y_pos;
     int vel;
     float vidas;
+    float alto;
+    float ancho;
     int mov_arr;
     int mov_aba;
     int mov_izq;
@@ -47,19 +49,21 @@ struct Entidad
 };
 
 // Se encarga de inicializar una entidad, el primer argumento es la entidad que se quiere inicializar; el segundo representa qué tipo de entidad es; el tercero es un apuntador a otra entidad de referencia, en caso de ser necesario
-void inicializar_entidad(struct Entidad entidad, int tipo, struct Entidad *entidad_origen)
+void inicializar_entidad(struct Entidad *entidad, int tipo, struct Entidad *entidad_origen)
 {
     switch (tipo)
     {
     case JUGADOR:
-        entidad.x_pos = 0;
-        entidad.y_pos = 0;
-        entidad.vel = 0;
-        entidad.vidas = 3;
-        entidad.mov_arr = 0;
-        entidad.mov_aba = 0;
-        entidad.mov_der = 0;
-        entidad.mov_izq = 0;
+        entidad->x_pos = 0;
+        entidad->y_pos = 0;
+        entidad->vel = 0;
+        entidad->vidas = 3;
+        entidad->alto = al_get_bitmap_width(entidad->sprite)*1;
+        entidad->ancho = al_get_bitmap_height(entidad->sprite)*1;
+        entidad->mov_arr = 0;
+        entidad->mov_aba = 0;
+        entidad->mov_der = 0;
+        entidad->mov_izq = 0;
         break;
     case PROYECTIL_JUGADOR:
         break;
@@ -77,9 +81,9 @@ void inicializar_entidad(struct Entidad entidad, int tipo, struct Entidad *entid
 }
 
 // Su tarea es dibujar una entidad dada en unas coordenadas determinadas
-void dibujar_entidad(struct Entidad entidad, float x, float y)
+void dibujar_entidad(struct Entidad entidad)
 {
-    al_draw_scaled_bitmap(entidad.sprite, 0, 0, al_get_bitmap_width(entidad.sprite), al_get_bitmap_height(entidad.sprite), x, y, al_get_bitmap_width(entidad.sprite)*1, al_get_bitmap_height(entidad.sprite)*1, 0);
+    al_draw_scaled_bitmap(entidad.sprite, 0, 0, al_get_bitmap_width(entidad.sprite), al_get_bitmap_height(entidad.sprite), entidad.x_pos, entidad.y_pos, entidad.ancho, entidad.alto, 0);
 }
 
 // Se encarga de mover una entidad dada en cierta dirección, varias llamadas conjuntas a esta funión pueden resultar en movimientos diagonales
@@ -110,4 +114,18 @@ int mover_entidad(float *x_pos, float *y_pos, int delta, int direccion, int comp
         break;
     }
     return 1;
+}
+
+
+int colisiona_AABB(struct Entidad entidad_uno, struct Entidad entidad_dos)
+{
+    int colisiona = 0;
+    if (entidad_uno.x_pos < (entidad_dos.x_pos + entidad_dos.ancho) &&
+        (entidad_uno.x_pos + entidad_uno.ancho) > entidad_dos.x_pos && 
+        entidad_uno.y_pos < (entidad_dos.y_pos + entidad_dos.alto) &&
+        (entidad_uno.y_pos + entidad_uno.alto) > entidad_dos.y_pos)
+    {
+        colisiona = 1;
+    }
+    return colisiona; 
 }
