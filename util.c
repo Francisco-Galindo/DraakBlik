@@ -12,7 +12,9 @@
 #define ALTO 480
 #define ANCHO 640
 #define VEL 14
-#define FPS 30
+#define FPS 60
+
+#define RAIZ_DOS 1.4142
 
 #define ARRIBA 1
 #define ABAJO 2

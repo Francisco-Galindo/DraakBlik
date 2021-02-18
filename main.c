@@ -141,7 +141,7 @@ int main()
                     {
                         if ((jugador.mov_aba || jugador.mov_arr) && (jugador.mov_izq || jugador.mov_der))
                         {
-                            jugador.vel = VEL/1.41;
+                            jugador.vel = (int)VEL/RAIZ_DOS;
                         }
                         else
                             jugador.vel = VEL; 
