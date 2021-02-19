@@ -1,8 +1,8 @@
 Tareas que debemos realizar en nuestro programa (poner un ** al principio de cada tarea para marcar que está resuelto)
 Diseño
   **Gargola
-  Ataque de la gargola (Piedra)
-  Atque del fenix (Fuego amarillo)
+  **Ataque de la gargola (Piedra)
+  **Atque del fenix (Fuego amarillo)
   Diseñar el cambio para las animaciones
     Cambio para los personajes (Movimiento de las alas)
     Exploción (Cuando mueren los personajes)
