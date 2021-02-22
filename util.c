@@ -40,7 +40,7 @@ struct Entidad
     float x_pos;
     float y_pos;
     int vel;
-    float vidas;
+    int vidas;
     float alto;
     float ancho;
     int mov_arr;
@@ -55,12 +55,12 @@ void inicializar_entidad(struct Entidad *entidad, int tipo, struct Entidad *enti
     switch (tipo)
     {
         case JUGADOR:
-            entidad->x_pos = 0;
-            entidad->y_pos = 0;
             entidad->vel = 0;
             entidad->vidas = 3;
             entidad->alto = al_get_bitmap_height(entidad->sprite)*1;
             entidad->ancho = al_get_bitmap_width(entidad->sprite)*1;
+            entidad->x_pos = 0;
+            entidad->y_pos = ALTO/2 - (entidad->alto / 2);
             entidad->mov_arr = 0;
             entidad->mov_aba = 0;
             entidad->mov_der = 0;
@@ -72,7 +72,7 @@ void inicializar_entidad(struct Entidad *entidad, int tipo, struct Entidad *enti
             entidad->x_pos = rand()%ANCHO;
             entidad->y_pos = rand()%ALTO;
             entidad->vel = 0;
-            entidad->vidas = 3;
+            entidad->vidas = 1;
             entidad->alto = al_get_bitmap_height(entidad->sprite)*1;
             entidad->ancho = al_get_bitmap_width(entidad->sprite)*1;
             entidad->mov_arr = 0;
@@ -96,6 +96,14 @@ void crear_entidad(struct Entidad entidades[], int *contador, int tipo, struct E
     int count = *contador;
     inicializar_entidad(&entidades[count], tipo, entidad_origen);
     *contador = count + 1;
+}
+
+void eliminar_entidad(struct Entidad entidades[], int indice, int *contador)
+{
+    int count = *contador;
+    for (int i = indice; i < count; i++)
+        entidades[i] = entidades[i+1];
+    *contador = count - 1;
 }
 
 // Su tarea es dibujar una entidad dada en unas coordenadas determinadas

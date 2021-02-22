@@ -14,7 +14,7 @@
 
 
 struct Entidad jugador;
-struct Entidad entidades[15];
+struct Entidad entidades[128];
 
 int main()
 {
@@ -26,7 +26,7 @@ int main()
     ALLEGRO_BITMAP *jugador_sprite;
     ALLEGRO_FONT *fuente60;
     ALLEGRO_FONT *fuente80;
-    ALLEGRO_TIMER *timer = NULL;
+    ALLEGRO_TIMER *framerate = NULL;
 
 
     //ALLEGRO_BITMAP *candado_cerrado;
@@ -107,29 +107,26 @@ int main()
     al_clear_to_color(color_fondo);
 
     eventos = al_create_event_queue();
-    timer = al_create_timer(1.0/FPS);
+    framerate = al_create_timer(1.0/FPS);
     al_register_event_source(eventos, al_get_display_event_source(disp));
     al_register_event_source(eventos, al_get_keyboard_event_source());
-    al_register_event_source(eventos, al_get_timer_event_source(timer));
+    al_register_event_source(eventos, al_get_timer_event_source(framerate));
     
     inicializar_entidad(&jugador, JUGADOR, NULL);
 
-
-    al_start_timer(timer);
+    al_start_timer(framerate);
     al_flip_display();
 
     while (!fin)
     {
         if (redibujar == 1 && al_event_queue_is_empty(eventos))
         {
-            al_clear_to_color(color_fondo);
-            for (int i = 0; i < count; i++)
-                if (colisiona_AABB(jugador, entidades[i]))
-                    al_clear_to_color(al_map_rgb(10, 120, 10)); 
-
+            al_clear_to_color(color_fondo); 
             for (int i = 0; i < count; i++)
                 dibujar_entidad(entidades[i]);
+
             dibujar_entidad(jugador);
+
             if (pausa == 1)
                 al_draw_text(fuente80, al_map_rgb(255, 255, 255), ANCHO/2, ALTO/2, ALLEGRO_ALIGN_CENTRE, "PAUSA");
 
@@ -145,11 +142,12 @@ int main()
         switch(evento.type)
         {
             case ALLEGRO_EVENT_TIMER:
-                if(evento.timer.source == timer)
+                if(evento.timer.source == framerate)
                 {
                     if (pausa == 0)
                     {
-                        if (count < 5)
+                        // Spawneo de las entidades
+                        if (count < 10)
                         {
                             if (rand()%50 == 3)
                             {
@@ -158,7 +156,8 @@ int main()
                                 printf("%i\n", count);
                             }
                         }
-                        
+
+                        // Movimiento del jugador
                         if ((jugador.mov_aba || jugador.mov_arr) && (jugador.mov_izq || jugador.mov_der))
                         {
                             jugador.vel = (int)VEL/RAIZ_DOS;
@@ -174,6 +173,22 @@ int main()
                             mover_entidad(&jugador.x_pos, &jugador.y_pos, jugador.vel, IZQUIERDA, BLOQUEO);
                         if (jugador.mov_der)
                             mover_entidad(&jugador.x_pos, &jugador.y_pos, jugador.vel, DERECHA, BLOQUEO);
+
+                        // Checando colisiones y actualizando las vidas de las entidades correspondientes
+                        for (int i = 0; i < count; i++)
+                        {
+                            if (colisiona_AABB(jugador, entidades[i]))
+                            {
+                                printf("Vidas: %i\n", jugador.vidas);
+                                jugador.vidas --;
+                                entidades[i].vidas --;
+                                if (jugador.vidas <= 0);
+                                    //asdfasdf
+                                if (entidades[i].vidas <= 0)
+                                    eliminar_entidad(entidades, i, &count);
+                            }
+
+                        }
                     }
                     redibujar = 1;
                 }
