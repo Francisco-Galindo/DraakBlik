@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
+#include <time.h>
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_font.h>
@@ -13,11 +14,11 @@
 
 
 struct Entidad jugador;
-struct Entidad colisionable;
-
+struct Entidad entidades[15];
 
 int main()
 {
+    srand(time(NULL));
     ALLEGRO_DISPLAY *disp;
     ALLEGRO_COLOR color_fondo;
     ALLEGRO_EVENT_QUEUE *eventos;
@@ -33,7 +34,7 @@ int main()
     //ALLEGRO_SAMPLE *sonido_exito;
     //ALLEGRO_SAMPLE *sonido_fracaso;
 
-    int fin = 0, redibujar = 1, pausa = 0;
+    int fin = 0, redibujar = 1, pausa = 0, count = 0;
 
     if(!al_init())
     {
@@ -59,9 +60,8 @@ int main()
         fin = 1;
     }
 
-    jugador_sprite = al_load_bitmap("Imagenes/dragonopc.png");
+    jugador_sprite = al_load_bitmap("Imagenes/DRAV_REC.png");
     jugador.sprite = jugador_sprite;
-    colisionable.sprite = jugador_sprite;
     if (!jugador_sprite)
     {
         printf("No se cargaron las imagenes");
@@ -111,11 +111,10 @@ int main()
     al_register_event_source(eventos, al_get_display_event_source(disp));
     al_register_event_source(eventos, al_get_keyboard_event_source());
     al_register_event_source(eventos, al_get_timer_event_source(timer));
-
+    
     inicializar_entidad(&jugador, JUGADOR, NULL);
-    inicializar_entidad(&colisionable, JUGADOR, NULL);
-    colisionable.x_pos = ANCHO/2;
-    colisionable.y_pos = ALTO/2;
+
+
     al_start_timer(timer);
     al_flip_display();
 
@@ -124,12 +123,13 @@ int main()
         if (redibujar == 1 && al_event_queue_is_empty(eventos))
         {
             al_clear_to_color(color_fondo);
-            if (colisiona_AABB(jugador, colisionable))
-            {
-               al_clear_to_color(al_map_rgb(10, 120, 10)); 
-            }
+            for (int i = 0; i < count; i++)
+                if (colisiona_AABB(jugador, entidades[i]))
+                    al_clear_to_color(al_map_rgb(10, 120, 10)); 
+
+            for (int i = 0; i < count; i++)
+                dibujar_entidad(entidades[i]);
             dibujar_entidad(jugador);
-            dibujar_entidad(colisionable);
             if (pausa == 1)
                 al_draw_text(fuente80, al_map_rgb(255, 255, 255), ANCHO/2, ALTO/2, ALLEGRO_ALIGN_CENTRE, "PAUSA");
 
@@ -138,7 +138,7 @@ int main()
             redibujar = 0;
 
         }
-        // Cambios
+
         // Checamos si hay un evento
         al_wait_for_event(eventos, &evento);
 
@@ -149,6 +149,16 @@ int main()
                 {
                     if (pausa == 0)
                     {
+                        if (count < 5)
+                        {
+                            if (rand()%50 == 3)
+                            {
+                                entidades[count].sprite = jugador_sprite;
+                                crear_entidad(entidades, &count, MANTICORA, NULL); 
+                                printf("%i\n", count);
+                            }
+                        }
+                        
                         if ((jugador.mov_aba || jugador.mov_arr) && (jugador.mov_izq || jugador.mov_der))
                         {
                             jugador.vel = (int)VEL/RAIZ_DOS;

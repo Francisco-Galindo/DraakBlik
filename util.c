@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
+#include <time.h>
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_font.h>
@@ -53,31 +54,48 @@ void inicializar_entidad(struct Entidad *entidad, int tipo, struct Entidad *enti
 {
     switch (tipo)
     {
-    case JUGADOR:
-        entidad->x_pos = 0;
-        entidad->y_pos = 0;
-        entidad->vel = 0;
-        entidad->vidas = 3;
-        entidad->alto = al_get_bitmap_width(entidad->sprite)*1;
-        entidad->ancho = al_get_bitmap_height(entidad->sprite)*1;
-        entidad->mov_arr = 0;
-        entidad->mov_aba = 0;
-        entidad->mov_der = 0;
-        entidad->mov_izq = 0;
-        break;
-    case PROYECTIL_JUGADOR:
-        break;
-    case MANTICORA:
-        break;
-    case PROYECTIL_MANTICORA:
-        break;
-    case FENIX:
-        break;
-    case PROYECTIL_FENIX:
-        break;
-    default:
-        break;
+        case JUGADOR:
+            entidad->x_pos = 0;
+            entidad->y_pos = 0;
+            entidad->vel = 0;
+            entidad->vidas = 3;
+            entidad->alto = al_get_bitmap_height(entidad->sprite)*1;
+            entidad->ancho = al_get_bitmap_width(entidad->sprite)*1;
+            entidad->mov_arr = 0;
+            entidad->mov_aba = 0;
+            entidad->mov_der = 0;
+            entidad->mov_izq = 0;
+            break;
+        case PROYECTIL_JUGADOR:
+            break;
+        case MANTICORA:
+            entidad->x_pos = rand()%ANCHO;
+            entidad->y_pos = rand()%ALTO;
+            entidad->vel = 0;
+            entidad->vidas = 3;
+            entidad->alto = al_get_bitmap_height(entidad->sprite)*1;
+            entidad->ancho = al_get_bitmap_width(entidad->sprite)*1;
+            entidad->mov_arr = 0;
+            entidad->mov_aba = 0;
+            entidad->mov_der = 0;
+            entidad->mov_izq = 0;
+            break;
+        case PROYECTIL_MANTICORA:
+            break;
+        case FENIX:
+            break;
+        case PROYECTIL_FENIX:
+            break;
+        default:
+            break;
     }
+}
+
+void crear_entidad(struct Entidad entidades[], int *contador, int tipo, struct Entidad *entidad_origen)
+{
+    int count = *contador;
+    inicializar_entidad(&entidades[count], tipo, entidad_origen);
+    *contador = count + 1;
 }
 
 // Su tarea es dibujar una entidad dada en unas coordenadas determinadas
@@ -92,31 +110,31 @@ int mover_entidad(float *x_pos, float *y_pos, int delta, int direccion, int comp
 {
     switch (direccion)
     {
-    case ARRIBA:
-        *y_pos -= delta;
-        if (*y_pos < -10)
-            *y_pos = -10;     
-        break;
-    case ABAJO:
-        *y_pos += delta;
-        if (*y_pos > ALTO-54)
-            *y_pos = ALTO-54;
-        break;
-    case IZQUIERDA:
-        *x_pos -= delta;
-        if (*x_pos < -10)
-            *x_pos = -10; 
-        break;
-    case DERECHA:
-        *x_pos += delta;
-        if (*x_pos > ANCHO-54)
-            *x_pos = ANCHO-54; 
-        break;
+        case ARRIBA:
+            *y_pos -= delta;
+            if (*y_pos < -10)
+                *y_pos = -10;     
+            break;
+        case ABAJO:
+            *y_pos += delta;
+            if (*y_pos > ALTO-54)
+                *y_pos = ALTO-54;
+            break;
+        case IZQUIERDA:
+            *x_pos -= delta;
+            if (*x_pos < -10)
+                *x_pos = -10; 
+            break;
+        case DERECHA:
+            *x_pos += delta;
+            if (*x_pos > ANCHO-54)
+                *x_pos = ANCHO-54; 
+            break;
     }
     return 1;
 }
 
-
+// Función que checa si una entidad colisiona con otra, se usa el algoritmo AABB.
 int colisiona_AABB(struct Entidad entidad_uno, struct Entidad entidad_dos)
 {
     int colisiona = 0;
