@@ -11,6 +11,7 @@
 
 int main ()
 {
+
     ALLEGRO_DISPLAY *disp;
     ALLEGRO_COLOR color_fondo;
     ALLEGRO_EVENT_QUEUE *eventos;
@@ -103,7 +104,7 @@ int main ()
 
         switch(evento.type)
         {
-            //Cambiar a: Para regresar al menú
+            //Cambiar a: Para regresar al menï¿½
             /*case ALLEGRO_EVENT_KEY_CHAR:
                 if(evento.keyboard.keycode == ALLEGRO_KEY_SPACE)
                 {

@@ -10,11 +10,12 @@
 #include <allegro5/allegro_audio.h>
 #include <allegro5/allegro_acodec.h>
 
-#include "util.c"
-
+#include "utilidades.c"
+#include "menu.c"
 
 struct Entidad jugador;
 struct Entidad entidades[128];
+struct Entidad entidades_no_vivas[64];
 
 int main()
 {
@@ -23,19 +24,16 @@ int main()
     ALLEGRO_COLOR color_fondo;
     ALLEGRO_EVENT_QUEUE *eventos;
     ALLEGRO_EVENT evento;
-    ALLEGRO_BITMAP *jugador_sprite;
-    ALLEGRO_FONT *fuente60;
-    ALLEGRO_FONT *fuente80;
     ALLEGRO_TIMER *framerate = NULL;
+    ALLEGRO_TIMER *anim = NULL;
 
-
-    //ALLEGRO_BITMAP *candado_cerrado;
 
     //ALLEGRO_SAMPLE *sonido_exito;
     //ALLEGRO_SAMPLE *sonido_fracaso;
 
-    int fin = 0, redibujar = 1, pausa = 0, count = 0;
+    int fin = 0, redibujar = 1, pausa = 0, mode = 0, num_entidades = 0, inertes = 0, proyectiles_jugador = 0, ops = 0;
 
+    // Cargando los elementos de Allegro
     if(!al_init())
     {
         printf("Todo murio :(");
@@ -60,13 +58,7 @@ int main()
         fin = 1;
     }
 
-    jugador_sprite = al_load_bitmap("Imagenes/DRAV_REC.png");
-    jugador.sprite = jugador_sprite;
-    if (!jugador_sprite)
-    {
-        printf("No se cargaron las imagenes");
-        fin =  1;
-    }
+    cargar_imagenes(&fin);
 
     if (!al_install_audio())
     {
@@ -86,52 +78,56 @@ int main()
         fin = 1;
     }
 
+    cargar_fuentes(&fin);
+
     //sonido_exito = al_load_sample("musica/exito.mp3");
     //sonido_fracaso = al_load_sample("musica/error.mp3");
 
-    fuente60 = al_load_font("Fuentes/PressStart2P.ttf", 40, 0);
-    fuente80 = al_load_font("Fuentes/PressStart2P.ttf", 60, 0);
-
-    if(!fuente60 || !fuente80)
-    {
-        printf("No se pudo cargar fuente");
-        fin = 1;
-    }
-
+    // Creando la ventana
     disp = al_create_display(ANCHO,ALTO);
     al_set_window_title(disp, "Movimiento");
-    al_set_display_icon(disp, jugador.sprite);
+    al_set_display_icon(disp, imagenes[ICONO_IMAGEN]);
 
-
-    color_fondo = al_map_rgb(20,20,20);
+    color_fondo = al_map_rgb(1, 1, 31);
     al_clear_to_color(color_fondo);
 
+    // Creando los eventos que van a ser usados en el juego
     eventos = al_create_event_queue();
     framerate = al_create_timer(1.0/FPS);
+    anim = al_create_timer(0.15);
     al_register_event_source(eventos, al_get_display_event_source(disp));
     al_register_event_source(eventos, al_get_keyboard_event_source());
     al_register_event_source(eventos, al_get_timer_event_source(framerate));
+    al_register_event_source(eventos, al_get_timer_event_source(anim));
     
-    inicializar_entidad(&jugador, JUGADOR, NULL);
-
+    inicializar_entidad(&jugador, JUGADOR, NULL, NULL);
+    inicializar_modo(entidades_no_vivas, mode, &inertes, NULL);
     al_start_timer(framerate);
+    al_start_timer(anim);
     al_flip_display();
-
     while (!fin)
     {
+        // Dibujando pantalla
         if (redibujar == 1 && al_event_queue_is_empty(eventos))
         {
-            al_clear_to_color(color_fondo); 
-            for (int i = 0; i < count; i++)
-                dibujar_entidad(entidades[i]);
+            al_clear_to_color(color_fondo);
+            if (mode == 0)
+            {
+                dibujar_menu(entidades_no_vivas, &ops);
+            }
+            else if (mode == 1)
+            { 
+                for (int i = 0; i < num_entidades; i++)
+                    dibujar_entidad(entidades[i]);
 
-            dibujar_entidad(jugador);
+                dibujar_entidad(jugador);
 
-            if (pausa == 1)
-                al_draw_text(fuente80, al_map_rgb(255, 255, 255), ANCHO/2, ALTO/2, ALLEGRO_ALIGN_CENTRE, "PAUSA");
+                if (pausa == 1)
+                    al_draw_text(fuentes[FUENTE_60], al_map_rgb(255, 255, 255), ANCHO/2, ALTO/2, ALLEGRO_ALIGN_CENTRE, "PAUSA");
+
+            }
 
             al_flip_display();
-
             redibujar = 0;
 
         }
@@ -142,18 +138,18 @@ int main()
         switch(evento.type)
         {
             case ALLEGRO_EVENT_TIMER:
+                // Cada que un nuevo cuadro deba ser dibujado (indicado por el timer "framerate"), realizar cálculos para actualizar el estado del juego, para luego cambiar el valor de la variable de dibujar a 1.
                 if(evento.timer.source == framerate)
                 {
-                    if (pausa == 0)
+                    if (pausa == 0 && mode == 1)
                     {
                         // Spawneo de las entidades
-                        if (count < 10)
+                        if (num_entidades < 10)
                         {
                             if (rand()%50 == 3)
                             {
-                                entidades[count].sprite = jugador_sprite;
-                                crear_entidad(entidades, &count, MANTICORA, NULL); 
-                                printf("%i\n", count);
+                                crear_entidad(entidades, &num_entidades, MANTICORA, NULL, NULL); 
+                                printf("%i\n", num_entidades);
                             }
                         }
 
@@ -175,48 +171,63 @@ int main()
                             mover_entidad(&jugador.x_pos, &jugador.y_pos, jugador.vel, DERECHA, BLOQUEO);
 
                         // Checando colisiones y actualizando las vidas de las entidades correspondientes
-                        for (int i = 0; i < count; i++)
+                        for (int i = 0; i < num_entidades; i++)
                         {
                             if (colisiona_AABB(jugador, entidades[i]))
                             {
-                                printf("Vidas: %i\n", jugador.vidas);
                                 jugador.vidas --;
                                 entidades[i].vidas --;
                                 if (jugador.vidas <= 0);
                                     //asdfasdf
                                 if (entidades[i].vidas <= 0)
-                                    eliminar_entidad(entidades, i, &count);
+                                    eliminar_entidad(entidades, i, &num_entidades);
                             }
 
                         }
                     }
                     redibujar = 1;
                 }
-                break;
-            case ALLEGRO_EVENT_KEY_CHAR:
-                if(evento.keyboard.keycode == ALLEGRO_KEY_SPACE)
+                else if (evento.timer.source == anim)
                 {
-                    pausa = !pausa;
+                    if (mode == 0)
+                    {
+                        dibujar_fuego(&entidades_no_vivas[0], imagenes[FUEGO_0_IMAGEN], imagenes[FUEGO_1_IMAGEN], imagenes[FUEGO_2_IMAGEN]);
+                        dibujar_fuego(&entidades_no_vivas[1], imagenes[FUEGO_0_IMAGEN], imagenes[FUEGO_1_IMAGEN], imagenes[FUEGO_2_IMAGEN]);
+
+                    }
                 }
                 break;
+            
+            
             case ALLEGRO_EVENT_KEY_DOWN:
                 if(evento.keyboard.keycode == ALLEGRO_KEY_W || evento.keyboard.keycode == ALLEGRO_KEY_UP)
                 {
-                    jugador.mov_arr = 1;
+                    if (mode == 1)
+                        jugador.mov_arr = 1;
+                                        else
+                    if (ops>0)
+                        ops--;
                 }
                 else if (evento.keyboard.keycode == ALLEGRO_KEY_S || evento.keyboard.keycode == ALLEGRO_KEY_DOWN)
                 {
-                    jugador.mov_aba = 1;
+                    if (mode == 1)
+                        jugador.mov_aba = 1;
+                    else
+                        if (ops<2)
+                            ops++;
                 }
                 if (evento.keyboard.keycode == ALLEGRO_KEY_A || evento.keyboard.keycode == ALLEGRO_KEY_LEFT) 
                 {
-                    jugador.mov_izq = 1;
+                    if (mode == 1)
+                        jugador.mov_izq = 1;
                 }
                 else if (evento.keyboard.keycode == ALLEGRO_KEY_D || evento.keyboard.keycode == ALLEGRO_KEY_RIGHT) 
                 {
-                    jugador.mov_der = 1;
+                    if (mode == 1)
+                        jugador.mov_der = 1;
                 }
                 break;
+            
             case ALLEGRO_EVENT_KEY_UP:
                 
                 if(evento.keyboard.keycode == ALLEGRO_KEY_W || evento.keyboard.keycode == ALLEGRO_KEY_UP)
@@ -236,6 +247,27 @@ int main()
                     jugador.mov_der = 0;
                 }
                 break;
+            
+            case ALLEGRO_EVENT_KEY_CHAR:
+                if(evento.keyboard.keycode == ALLEGRO_KEY_SPACE)
+                {
+                    if (mode == 1)
+                        pausa = !pausa;
+                }
+                else if (evento.keyboard.keycode == ALLEGRO_KEY_ENTER)
+                {
+                    if (ops == 0)
+                    {
+                        inertes = 0;
+                        num_entidades = 0;
+                        mode = 1;
+                        inicializar_modo(entidades, mode, &num_entidades, &jugador);
+                    }
+                    else if (ops == 2)
+                        fin = 1;
+                }
+                break;
+            
             case ALLEGRO_EVENT_DISPLAY_SWITCH_OUT:
                 pausa = 1;
                 printf("\nMinimizado\n");
