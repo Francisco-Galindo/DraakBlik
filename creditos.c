@@ -90,7 +90,7 @@ int main ()
         al_draw_scaled_bitmap(mont2, 0, 0, al_get_bitmap_width(mont2), al_get_bitmap_height(mont2), 0, 0 ,640, 480, 0);
         al_draw_text(fuente60, al_map_rgb(255, 255, 255), 640/2, 480-440, ALLEGRO_ALIGN_CENTRE, "CREDITOS");
         al_draw_text(fuente40, al_map_rgb(255, 229, 153), 640/2, 480-370, ALLEGRO_ALIGN_CENTRE, "HECHO POR:");
-        al_draw_text(fuente30, al_map_rgb(255, 229, 153), 640/2, 480-340, ALLEGRO_ALIGN_CENTRE, "UWUntu");
+        al_draw_text(fuente30, al_map_rgb(255, 229, 153), 640/2, 480-340, ALLEGRO_ALIGN_CENTRE, "UwUntu");
         al_draw_text(fuente30, al_map_rgb(255, 229, 153), 640/2, 480-280, ALLEGRO_ALIGN_CENTRE, "ACOSTA DURAN LUNA FERNANDA");
         al_draw_text(fuente30, al_map_rgb(255, 229, 153), 640/2, 480-250, ALLEGRO_ALIGN_CENTRE, "GALINDO MENA FRANCISCO");
         al_draw_text(fuente30, al_map_rgb(255, 229, 153), 640/2, 480-220, ALLEGRO_ALIGN_CENTRE, "LOPEZ MORALES ZAIR");

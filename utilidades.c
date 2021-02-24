@@ -60,7 +60,7 @@ ALLEGRO_FONT *fuentes[5];
 
 void cargar_imagenes(int *fin)
 {
-    imagenes[JUGADOR_IMAGEN] = al_load_bitmap("Imagenes/DRAV_REC.png");
+    imagenes[JUGADOR_IMAGEN] = al_load_bitmap("Imagenes/DRAV.png");
     imagenes[ICONO_IMAGEN] = al_load_bitmap("Imagenes/item.png");
     imagenes[WALL_IMAGEN] = al_load_bitmap("Imagenes/fondo.png");
     imagenes[MONT1_IMAGEN] = al_load_bitmap("Imagenes/mnt5.png");

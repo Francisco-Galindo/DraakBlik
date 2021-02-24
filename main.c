@@ -10,8 +10,7 @@
 #include <allegro5/allegro_audio.h>
 #include <allegro5/allegro_acodec.h>
 
-#include "utilidades.c"
-#include "menu.c"
+#include "menuYCreditos.c"
 
 struct Entidad jugador;
 struct Entidad entidades[128];
@@ -105,6 +104,8 @@ int main()
     al_start_timer(framerate);
     al_start_timer(anim);
     al_flip_display();
+
+
     while (!fin)
     {
         // Dibujando pantalla
@@ -125,6 +126,10 @@ int main()
                 if (pausa == 1)
                     al_draw_text(fuentes[FUENTE_60], al_map_rgb(255, 255, 255), ANCHO/2, ALTO/2, ALLEGRO_ALIGN_CENTRE, "PAUSA");
 
+            }
+            else if (mode == 2)
+            {
+                dibujar_creditos();
             }
 
             al_flip_display();
@@ -256,12 +261,18 @@ int main()
                 }
                 else if (evento.keyboard.keycode == ALLEGRO_KEY_ENTER)
                 {
-                    if (ops == 0)
+                    if (ops == 0 && mode == 0)
                     {
                         inertes = 0;
                         num_entidades = 0;
                         mode = 1;
                         inicializar_modo(entidades, mode, &num_entidades, &jugador);
+                    }
+                    else if (ops == 1)
+                    {
+                        inertes = 0;
+                        num_entidades = 0;
+                        mode = 2;
                     }
                     else if (ops == 2)
                         fin = 1;
