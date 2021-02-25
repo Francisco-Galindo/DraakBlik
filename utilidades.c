@@ -228,10 +228,12 @@ void inicializar_modo(struct Entidad entidades[], int modo, int *contador, struc
     case 0:
         crear_entidad(entidades, contador, -1, NULL, imagenes[FUEGO_0_IMAGEN]);
         crear_entidad(entidades, contador, -1, NULL, imagenes[FUEGO_0_IMAGEN]);
+
         entidades[0].ancho = al_get_bitmap_width(entidades[0].sprite)*0.15;
         entidades[0].alto = al_get_bitmap_height(entidades[0].sprite)*0.15;
         entidades[0].x_pos = 15;
         entidades[0].y_pos = 100;
+        
         entidades[1].ancho = al_get_bitmap_width(entidades[1].sprite)*0.15;
         entidades[1].alto = al_get_bitmap_height(entidades[1].sprite)*0.15;
         entidades[1].x_pos = 480;

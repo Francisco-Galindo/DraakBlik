@@ -84,7 +84,7 @@ int main()
 
     // Creando la ventana
     disp = al_create_display(ANCHO,ALTO);
-    al_set_window_title(disp, "Movimiento");
+    al_set_window_title(disp, "Draak Blik");
     al_set_display_icon(disp, imagenes[ICONO_IMAGEN]);
 
     color_fondo = al_map_rgb(1, 1, 31);
@@ -124,7 +124,10 @@ int main()
                 dibujar_entidad(jugador);
 
                 if (pausa == 1)
-                    al_draw_text(fuentes[FUENTE_60], al_map_rgb(255, 255, 255), ANCHO/2, ALTO/2, ALLEGRO_ALIGN_CENTRE, "PAUSA");
+                {
+                    al_draw_text(fuentes[FUENTE_60], al_map_rgb(255, 255, 255), ANCHO/2, ALTO/2.5, ALLEGRO_ALIGN_CENTRE, "PAUSA");
+                    al_draw_text(fuentes[FUENTE_15], al_map_rgb(255, 255, 255), ANCHO/2, ALTO/1.5, ALLEGRO_ALIGN_CENTRE, "PRESIONA ENTER PARA IR AL MENU");
+                }
 
             }
             else if (mode == 2)
@@ -143,7 +146,9 @@ int main()
         switch(evento.type)
         {
             case ALLEGRO_EVENT_TIMER:
-                // Cada que un nuevo cuadro deba ser dibujado (indicado por el timer "framerate"), realizar cálculos para actualizar el estado del juego, para luego cambiar el valor de la variable de dibujar a 1.
+                // Cada que un nuevo cuadro deba ser dibujado (indicado por el
+                // timer "framerate"), realizar cálculos para actualizar el 
+                // estado del juego, para luego cambiar el valor de la variable de dibujar a 1.
                 if(evento.timer.source == framerate)
                 {
                     if (pausa == 0 && mode == 1)
@@ -256,26 +261,51 @@ int main()
             case ALLEGRO_EVENT_KEY_CHAR:
                 if(evento.keyboard.keycode == ALLEGRO_KEY_SPACE)
                 {
-                    if (mode == 1)
-                        pausa = !pausa;
+                    //if (mode == 1)
+                       // pausa = !pausa;
                 }
                 else if (evento.keyboard.keycode == ALLEGRO_KEY_ENTER)
                 {
-                    if (ops == 0 && mode == 0)
+                    if (mode == 0)
+                    {
+                        if (ops == 0)
+                        {
+                            inertes = 0;
+                            num_entidades = 0;
+                            mode = 1;
+                            inicializar_modo(entidades, mode, &num_entidades, &jugador);
+                        }
+                        else if (ops == 1)
+                        {
+                            inertes = 0;
+                            num_entidades = 0;
+                            mode = 2;
+                        }
+                        else if (ops == 2)
+                            fin = 1;
+                    }
+                    else if (mode == 1 && pausa == 1)
                     {
                         inertes = 0;
                         num_entidades = 0;
-                        mode = 1;
-                        inicializar_modo(entidades, mode, &num_entidades, &jugador);
+                        mode = 0;   
+                        inicializar_modo(entidades_no_vivas, mode, &num_entidades, NULL);      
                     }
-                    else if (ops == 1)
+
+                }
+                else if (evento.keyboard.keycode == ALLEGRO_KEY_ESCAPE)
+                {
+                    if (mode == 1)
+                    {
+                        pausa = !pausa;
+                    }
+                    else if (mode == 2) 
                     {
                         inertes = 0;
                         num_entidades = 0;
-                        mode = 2;
-                    }
-                    else if (ops == 2)
-                        fin = 1;
+                        mode = 0;   
+                        inicializar_modo(entidades_no_vivas, mode, &num_entidades, NULL);  
+                    }        
                 }
                 break;
             
