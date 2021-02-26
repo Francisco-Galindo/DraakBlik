@@ -11,7 +11,7 @@ ALLEGRO_COLOR color_evento(int ops, int prue)
     return color_select;
 }
 
-void dibujar_fuego (struct Entidad *entidad, ALLEGRO_BITMAP *imagen1, ALLEGRO_BITMAP *imagen2, ALLEGRO_BITMAP *imagen3)
+void dibujar_fuego(struct Entidad *entidad, ALLEGRO_BITMAP *imagen1, ALLEGRO_BITMAP *imagen2, ALLEGRO_BITMAP *imagen3)
 {
     if(entidad->sprite == imagen1)
     {
@@ -19,7 +19,7 @@ void dibujar_fuego (struct Entidad *entidad, ALLEGRO_BITMAP *imagen1, ALLEGRO_BI
     }
     else if (entidad->sprite == imagen2)
     {
-        entidad->sprite = imagen3;
+        entidad->sprite = imagen1;
     }
     else 
         entidad->sprite = imagen1;
