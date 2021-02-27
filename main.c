@@ -100,6 +100,7 @@ int main()
     al_register_event_source(eventos, al_get_keyboard_event_source());
     al_register_event_source(eventos, al_get_timer_event_source(framerate));
     al_register_event_source(eventos, al_get_timer_event_source(anim));
+
     inicializar_entidad(&jugador, JUGADOR, NULL, NULL);
     inicializar_modo(entidades_no_vivas, mode, &num_inertes, NULL);
     al_start_timer(framerate);
@@ -248,9 +249,8 @@ int main()
                     {
                         jugador.y_vel += VEL;         
                     }
-                    else
-                        if (ops<2)
-                            ops++;
+                    else if (ops<2)
+                        ops++;
                 }
                 if (evento.keyboard.keycode == ALLEGRO_KEY_A || evento.keyboard.keycode == ALLEGRO_KEY_LEFT) 
                 {

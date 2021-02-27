@@ -147,7 +147,7 @@ void inicializar_entidad(struct Entidad *entidad, int tipo, struct Entidad *enti
         case PROYECTIL_JUGADOR:
             entidad->tipo = PROYECTIL_JUGADOR;
             entidad->sprite = imagenes[PROYECTIL_0_IMAGEN];
-            entidad->max_vel = VEL*2;
+            entidad->max_vel = VEL * 2;
             entidad->x_vel = entidad->max_vel;
             entidad->vidas = 1;
             entidad->alto = al_get_bitmap_height(entidad->sprite)*0.125;
@@ -166,6 +166,15 @@ void inicializar_entidad(struct Entidad *entidad, int tipo, struct Entidad *enti
             entidad->ancho = al_get_bitmap_width(entidad->sprite)*1;
             break;
         case PROYECTIL_MANTICORA:
+            entidad->tipo = PROYECTIL_MANTICORA;
+            entidad->sprite = imagenes[PROYECTIL_1_IMAGEN];
+            entidad->max_vel = (VEL * -2) / 2;
+            entidad->x_vel = entidad->max_vel;
+            entidad->vidas = 1;
+            entidad->alto = al_get_bitmap_height(entidad->sprite)*0.125;
+            entidad->ancho = al_get_bitmap_width(entidad->sprite)*0.125;
+            entidad->x_pos = entidad_origen->x_pos + (entidad_origen->ancho / 2);
+            entidad->y_pos = entidad_origen->y_pos + (entidad_origen->alto / 2);
             break;
         case FENIX:
             entidad->tipo = FENIX;
@@ -178,7 +187,15 @@ void inicializar_entidad(struct Entidad *entidad, int tipo, struct Entidad *enti
             entidad->ancho = al_get_bitmap_width(entidad->sprite)*0.1;
             break;
         case PROYECTIL_FENIX:
-        
+            entidad->tipo = PROYECTIL_FENIX;
+            entidad->sprite = imagenes[PROYECTIL_2_IMAGEN];
+            entidad->max_vel = (VEL * -2) / 2;
+            entidad->x_vel = entidad->max_vel;
+            entidad->vidas = 1;
+            entidad->alto = al_get_bitmap_height(entidad->sprite)*0.125;
+            entidad->ancho = al_get_bitmap_width(entidad->sprite)*0.125;
+            entidad->x_pos = entidad_origen->x_pos + (entidad_origen->ancho / 2);
+            entidad->y_pos = entidad_origen->y_pos + (entidad_origen->alto / 2);
             break;
         case GARGOLA:
             entidad->tipo = GARGOLA;
@@ -191,7 +208,15 @@ void inicializar_entidad(struct Entidad *entidad, int tipo, struct Entidad *enti
             entidad->ancho = al_get_bitmap_width(entidad->sprite)*1;
             break;
         case PROYECTIL_GARGOLA:
-        
+            entidad->tipo = PROYECTIL_GARGOLA;
+            entidad->sprite = imagenes[PROYECTIL_3_IMAGEN];
+            entidad->max_vel = (VEL * -2) / 2;
+            entidad->x_vel = entidad->max_vel;
+            entidad->vidas = 1;
+            entidad->alto = al_get_bitmap_height(entidad->sprite)*0.125;
+            entidad->ancho = al_get_bitmap_width(entidad->sprite)*0.125;
+            entidad->x_pos = entidad_origen->x_pos + (entidad_origen->ancho / 2);
+            entidad->y_pos = entidad_origen->y_pos + (entidad_origen->alto / 2);
             break;
         case HYDRA:
             entidad->tipo = HYDRA;
@@ -204,7 +229,15 @@ void inicializar_entidad(struct Entidad *entidad, int tipo, struct Entidad *enti
             entidad->ancho = al_get_bitmap_width(entidad->sprite)*1;
             break;
         case PROYECTIL_HYDRA:
-        
+            entidad->tipo = PROYECTIL_FENIX;
+            entidad->sprite = imagenes[PROYECTIL_3_IMAGEN];
+            entidad->max_vel = (VEL * -2) / 2;
+            entidad->x_vel = entidad->max_vel;
+            entidad->vidas = 1;
+            entidad->alto = al_get_bitmap_height(entidad->sprite)*0.125;
+            entidad->ancho = al_get_bitmap_width(entidad->sprite)*0.125;
+            entidad->x_pos = entidad_origen->x_pos + (entidad_origen->ancho / 2);
+            entidad->y_pos = entidad_origen->y_pos + (entidad_origen->alto / 2);
             break;
         case FUEGO:
             entidad->tipo = FUEGO;
@@ -242,7 +275,7 @@ void eliminar_entidad(struct Entidad entidades[], int indice, int *contador)
 }
 
 
-// Su tarea es dibujar una entidad dada en unas coordenadas determinadas
+// Su tarea es dibujar una entidad, basándose en sus coordenadasy tamaño
 void dibujar_entidad(struct Entidad entidad)
 {
     al_draw_scaled_bitmap(entidad.sprite, 0, 0, al_get_bitmap_width(entidad.sprite), al_get_bitmap_height(entidad.sprite), entidad.x_pos, entidad.y_pos, entidad.ancho, entidad.alto, 0);
