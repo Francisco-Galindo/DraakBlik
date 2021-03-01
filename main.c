@@ -175,8 +175,8 @@ int main()
                         {
                             if (rand()%FPS == 3)
                             {
-                                int tipo = rand()%4+2;
-                                entidad_crear(entidades, &num_entidades, tipo, NULL, NULL); 
+                                //int tipo = rand()%4+2;
+                                entidad_crear(entidades, &num_entidades, HYDRA, NULL, NULL); 
                                 printf("%i\n", num_entidades);
                             }
                         }
@@ -199,11 +199,11 @@ int main()
 
                                 // Calculando la distancia entre el proyectil y el jugador
                                 float dis_x = (proyectiles_enemigo[indice].x_pos + 
-                                            (proyectiles_enemigo[indice].ancho / 2)) - 
-                                            (jugador.x_pos + (jugador.ancho / 2));
+                                               (proyectiles_enemigo[indice].ancho / 2)) - 
+                                               (jugador.x_pos + (jugador.ancho / 2));
                                 float dis_y = (proyectiles_enemigo[indice].y_pos + 
-                                            (proyectiles_enemigo[indice].alto / 2)) - 
-                                            (jugador.y_pos + (jugador.alto / 2));
+                                               (proyectiles_enemigo[indice].alto / 2)) - 
+                                               (jugador.y_pos + (jugador.alto / 2));
                                 double dis_total = pow((dis_x * dis_x) + (dis_y * dis_y), 0.5);
 
                                 // Modificando la magnitud del vector para que sea igual a la velocidad máxima de movimiento de este proyectil
@@ -297,13 +297,13 @@ int main()
                 }
                 else if (evento.timer.source == anim)
                 {
-                    if (mode == 0)
+                    if (mode == 0 && al_get_timer_count(anim) % 2 == 0)
                     {
                         entidad_animar(&entidades_no_vivas[0]);
                         entidad_animar(&entidades_no_vivas[1]);
 
                     }
-                    else if (pausa == 1)
+                    else if (mode == 1 && pausa == 1)
                     {
                         al_set_timer_count(anim, al_get_timer_count(anim) - 1);
                     }

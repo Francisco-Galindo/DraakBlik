@@ -270,7 +270,6 @@ void entidad_inicializar(struct Entidad *entidad, int tipo, struct Entidad *enti
             entidad->sprite = imagen;
             entidad->alto = al_get_bitmap_height(entidad->sprite);
             entidad->ancho = al_get_bitmap_width(entidad->sprite);
-            printf("%f\n", entidad->ancho);
             break;
     }
 }
@@ -299,8 +298,7 @@ void entidad_eliminar(struct Entidad entidades[], int indice, int *contador)
 void entidad_dibujar(struct Entidad entidad)
 {
     int flag = 0;
-    if (entidad.tipo == HYDRA || entidad.tipo == PROYECTIL_JUGADOR)
-        flag = ALLEGRO_FLIP_HORIZONTAL;
+
     al_draw_scaled_bitmap(entidad.sprite, 0, 0, al_get_bitmap_width(entidad.sprite), al_get_bitmap_height(entidad.sprite), entidad.x_pos, entidad.y_pos, entidad.ancho, entidad.alto, flag);
 }
 
