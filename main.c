@@ -12,6 +12,7 @@
 #include <allegro5/allegro_acodec.h>
 
 #include "menuYCreditos.c"
+#include "Juego.c"
 
 struct Entidad jugador;
 struct Entidad entidades[128];
@@ -378,7 +379,7 @@ int main()
                 break;
             
             case ALLEGRO_EVENT_KEY_CHAR:
-                if (evento.keyboard.keycode == ALLEGRO_KEY_ENTER)
+                if (evento.keyboard.keycode == ALLEGRO_KEY_ENTER || evento.keyboard.keycode == ALLEGRO_KEY_PAD_ENTER)
                 {
                     if (mode != 1)
                     {
