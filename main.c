@@ -2,6 +2,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <time.h>
+#include <math.h>
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_font.h>
@@ -29,10 +30,7 @@ int main()
     ALLEGRO_TIMER *anim = NULL;
 
 
-    //ALLEGRO_SAMPLE *sonido_exito;
-    //ALLEGRO_SAMPLE *sonido_fracaso;
-
-    int fin = 0, redibujar = 1, pausa = 1, mode = 0, num_entidades = 0, num_inertes = 0, num_proyectiles_jugador = 0, num_proyectiles_enemigos = 0, ops = 0;
+    int fin = 0, redibujar = 1, pausa = 1, mode = 0, num_entidades = 0, num_inertes = 0, num_proyectiles_jugador = 0, num_proyectiles_enemigos = 0, ops = 0, danado = 0;
 
     // Cargando los elementos de Allegro
     if(!al_init())
@@ -47,6 +45,8 @@ int main()
         fin = 1;
     }
     
+    fuentes_cargar(&fin);
+
     if(!al_install_keyboard())
     {
       printf("No carga el coomplemento de teclados");
@@ -59,7 +59,7 @@ int main()
         fin = 1;
     }
 
-    cargar_imagenes(&fin);
+    imagenes_cargar(&fin);
 
     if (!al_install_audio())
     {
@@ -73,16 +73,13 @@ int main()
         fin = 1;
     }
 
-    if (!al_reserve_samples(2))
+    if (!al_reserve_samples(32))
     {
         printf("No se pudo cargar mixer");
         fin = 1;
     }
+    sonidos_cargar(&fin);
 
-    cargar_fuentes(&fin);
-
-    //sonido_exito = al_load_sample("musica/exito.mp3");
-    //sonido_fracaso = al_load_sample("musica/error.mp3");
 
     // Creando la ventana
     disp = al_create_display(ANCHO,ALTO);
@@ -101,8 +98,8 @@ int main()
     al_register_event_source(eventos, al_get_timer_event_source(framerate));
     al_register_event_source(eventos, al_get_timer_event_source(anim));
 
-    inicializar_entidad(&jugador, JUGADOR, NULL, NULL);
-    inicializar_modo(entidades_no_vivas, mode, &num_inertes, NULL);
+    entidad_inicializar(&jugador, JUGADOR, NULL, NULL);
+    modo_inicializar(entidades_no_vivas, mode, &num_inertes, NULL);
     al_start_timer(framerate);
     al_start_timer(anim);
     al_flip_display();
@@ -119,14 +116,24 @@ int main()
                 dibujar_menu(entidades_no_vivas, &ops);
             }
             else if (mode == 1)
-            { 
+            {
+                for (int i = 0; i < num_inertes; i++)
+                    entidad_dibujar(entidades_no_vivas[i]); 
+
                 for (int i = 0; i < num_entidades; i++)
-                    dibujar_entidad(entidades[i]);
+                    entidad_dibujar(entidades[i]);
 
                 for (int i = 0; i < num_proyectiles_jugador; i++)                
-                    dibujar_entidad(proyectiles_jugador[i]);
+                    entidad_dibujar(proyectiles_jugador[i]);
 
-                dibujar_entidad(jugador);
+                for (int i = 0; i < num_proyectiles_enemigos; i++)
+                {
+                    entidad_dibujar(proyectiles_enemigo[i]);
+                }
+                
+
+                if ((danado == 0 || pausa == 1) || al_get_timer_count(anim) % 2 == 0)
+                    entidad_dibujar(jugador);
 
                 if (pausa == 1)
                 {
@@ -159,59 +166,114 @@ int main()
                     if (pausa == 0 && mode == 1)
                     {
                         // Spawneo de las entidades
-                        if (num_entidades < 10)
+                        if (num_entidades < 5)
                         {
-                            if (rand()%50 == 3)
+                            if (rand()%FPS == 3)
                             {
-                                crear_entidad(entidades, &num_entidades, FENIX, NULL, NULL); 
+                                int tipo = rand()%4+2;
+                                entidad_crear(entidades, &num_entidades, tipo, NULL, NULL); 
                                 printf("%i\n", num_entidades);
                             }
                         }
 
                         // Movimiento del jugador
-                        mover_entidad(&jugador, BLOQUEO);
+                        entidad_mover(&jugador, BLOQUEO);
 
-                        // Checando colisiones y actualizando las vidas de las entidades correspondientes
+                        // Actualización en el estado de los enemigos
                         for (int i = 0; i < num_entidades; i++)
                         {
-                            if (colisiona_AABB(jugador, entidades[i]))
+                            // Hacer que las manticoras disparen en dirección del enemigo de manera aleatoria
+                            if (entidades[i].tipo == MANTICORA && rand()%(FPS * 2) == 2)
                             {
+                                entidad_crear(proyectiles_enemigo, &num_proyectiles_enemigos, PROYECTIL_MANTICORA, &entidades[i], NULL);
+
+                                // Variable que indica el indice del proyectil del que queremos calcular el vector de movimiento
+                                int indice = num_proyectiles_enemigos-1;
+
+                                // Vamos a imaginar la velocidad en cada eje del proyectil como los componentes de un vector, así, sabiendo la posición del jugador, podemos hacer que el proyectil vaya hacia él
+
+                                // Calculando la distancia entre el proyectil y el jugador
+                                float dis_x = (proyectiles_enemigo[indice].x_pos + 
+                                            (proyectiles_enemigo[indice].ancho / 2)) - 
+                                            (jugador.x_pos + (jugador.ancho / 2));
+                                float dis_y = (proyectiles_enemigo[indice].y_pos + 
+                                            (proyectiles_enemigo[indice].alto / 2)) - 
+                                            (jugador.y_pos + (jugador.alto / 2));
+                                double dis_total = pow((dis_x * dis_x) + (dis_y * dis_y), 0.5);
+
+                                // Modificando la magnitud del vector para que sea igual a la velocidad máxima de movimiento de este proyectil
+                                double const_proporcionalidad = dis_total/proyectiles_enemigo[indice].max_vel;
+                                proyectiles_enemigo[indice].x_vel = dis_x/const_proporcionalidad;
+                                proyectiles_enemigo[indice].y_vel = dis_y/const_proporcionalidad;
+                            }
+                            // Las gárgolas dispararán aleatoriamente también
+                            else if (entidades[i].tipo == GARGOLA && rand()%FPS == 2)
+                            {
+                                entidad_crear(proyectiles_enemigo, &num_proyectiles_enemigos, PROYECTIL_GARGOLA, &entidades[i], NULL);
+                            }
+
+
+                            if (danado == 0 && colisiona_AABB(jugador, entidades[i]))
+                            {
+                                al_play_sample(sonidos[DANO_SONIDO], 1, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
+                                danado = 1;
+                                al_set_timer_count(anim, 0);
                                 jugador.vidas --;
                                 entidades[i].vidas --;
                                 if (jugador.vidas <= 0);
                                     //printf("lol");
                                 if (entidades[i].vidas <= 0)
-                                    eliminar_entidad(entidades, i, &num_entidades);
+                                    entidad_eliminar(entidades, i, &num_entidades);
                             }
 
                         }
 
-                        // Colisiones de proyectiles del jugador con entidades enemigas 
+                        // Actualización de estado de cada proyectil del jugador
                         for (int i = 0; i < num_proyectiles_jugador; i++)
                         {
+                            if (!entidad_mover(&proyectiles_jugador[i], ELIMINAR))
+                            {
+                                entidad_eliminar(proyectiles_jugador, i, &num_proyectiles_jugador);
+                            }
                             for (int j = 0; j < num_entidades; j++)
                             {
                                 if (colisiona_AABB(proyectiles_jugador[i], entidades[j]))
                                 {
                                     proyectiles_jugador[i].vidas --;
                                     entidades[j].vidas --;
-                                    if (jugador.vidas <= 0);
-                                        eliminar_entidad(proyectiles_jugador, i, &num_proyectiles_jugador);
+                                    if (proyectiles_jugador[i].vidas <= 0);
+                                        entidad_eliminar(proyectiles_jugador, i, &num_proyectiles_jugador);
                                     if (entidades[j].vidas <= 0)
-                                        eliminar_entidad(entidades, j, &num_entidades);
+                                        entidad_eliminar(entidades, j, &num_entidades);
                                 }
                             }
                         }
 
-
-                        for (int i = 0; i < num_proyectiles_jugador; i++)
+                        for (int i = 0; i < num_proyectiles_enemigos; i++)
                         {
-                            if (!mover_entidad(&proyectiles_jugador[i], ELIMINAR))
+                            if (!entidad_mover(&proyectiles_enemigo[i], ELIMINAR))
                             {
-                                eliminar_entidad(proyectiles_jugador, i, &num_proyectiles_jugador);
-                                printf("lol\n");
+                                entidad_eliminar(proyectiles_enemigo, i, &num_proyectiles_enemigos);
+                            }
+                            if (danado == 0 && colisiona_AABB(jugador, proyectiles_enemigo[i]))
+                            {
+                                al_play_sample(sonidos[DANO_SONIDO], 1, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
+                                danado = 1;
+                                al_set_timer_count(anim, 0);
+                                jugador.vidas --;
+                                proyectiles_enemigo[i].vidas--;
+                                if (proyectiles_enemigo[i].vidas <= 0)
+                                    entidad_eliminar(proyectiles_enemigo, i, &num_proyectiles_enemigos);
                             }
                         }
+
+                        // Actualizando estado de las entidades inertes
+                        for (int i = 0; i < num_inertes; i++)
+                            if (!entidad_mover(&entidades_no_vivas[i], ELIMINAR))
+                            {
+                                entidades_no_vivas[i].x_pos = ANCHO - 10;
+                            }
+
                     }
                     redibujar = 1;
                 }
@@ -219,15 +281,25 @@ int main()
                 {
                     if (mode == 0)
                     {
-                        animar_sprite(&entidades_no_vivas[0]);
-                        animar_sprite(&entidades_no_vivas[1]);
+                        entidad_animar(&entidades_no_vivas[0]);
+                        entidad_animar(&entidades_no_vivas[1]);
 
+                    }
+                    else if (pausa == 1)
+                    {
+                        al_set_timer_count(anim, al_get_timer_count(anim) - 1);
                     }
                     else if (mode == 1 && pausa == 0)
                     {
-                        animar_sprite(&jugador);
+                        entidad_animar(&jugador);
                         for (int i = 0; i < num_entidades; i++)
-                            animar_sprite(&entidades[i]);
+                            entidad_animar(&entidades[i]);
+                        
+                        if(danado == 1 && al_get_timer_count(anim) == 10)
+                        {
+                            danado = 0;
+                            printf("lel: %i\n", danado);
+                        }
                     }
                 }
                 break;
@@ -238,33 +310,50 @@ int main()
                 {
                     if (mode == 1)
                     {
-                        jugador.y_vel += VEL * -1;
+                        jugador.y_vel += jugador.max_vel * -1;
                     }
-                    else if (ops>0)
+                    else if (mode == 0 && ops>0)
+                    {
                         ops--;
+                        al_play_sample(sonidos[SELECCION_SONIDO], 1, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
+                    }
                 }
                 else if (evento.keyboard.keycode == ALLEGRO_KEY_S || evento.keyboard.keycode == ALLEGRO_KEY_DOWN)
                 {
                     if (mode == 1)
                     {
-                        jugador.y_vel += VEL;         
+                        jugador.y_vel += jugador.max_vel;         
                     }
-                    else if (ops<2)
+                    else if (mode == 0 && ops<2)
+                    {
                         ops++;
+                        al_play_sample(sonidos[SELECCION_SONIDO], 1, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
+                    }      
                 }
                 if (evento.keyboard.keycode == ALLEGRO_KEY_A || evento.keyboard.keycode == ALLEGRO_KEY_LEFT) 
                 {
                     if (mode == 1)
                     {
-                        jugador.x_vel += VEL * -1;
+                        jugador.x_vel += jugador.max_vel * -1;
                     }
                 }
                 else if (evento.keyboard.keycode == ALLEGRO_KEY_D || evento.keyboard.keycode == ALLEGRO_KEY_RIGHT) 
                 {
                     if (mode == 1)
                     {
-                        jugador.x_vel += VEL;                        
+                        jugador.x_vel += jugador.max_vel;                        
                     }
+                }
+                else if(evento.keyboard.keycode == ALLEGRO_KEY_SPACE)
+                {
+                    if (mode == 1 && pausa == 0)
+                    {
+                       entidad_crear(proyectiles_jugador, &num_proyectiles_jugador, PROYECTIL_JUGADOR, &jugador, NULL);
+                        al_play_sample(sonidos[DISPARO_SONIDO], 1, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
+
+                    }
+
+
                 }
                 break;
             
@@ -272,43 +361,41 @@ int main()
                 
                 if(evento.keyboard.keycode == ALLEGRO_KEY_W || evento.keyboard.keycode == ALLEGRO_KEY_UP)
                 {
-                    jugador.y_vel -= VEL * -1;
+                    jugador.y_vel -= jugador.max_vel * -1;
                 }
                 else if (evento.keyboard.keycode == ALLEGRO_KEY_S || evento.keyboard.keycode == ALLEGRO_KEY_DOWN)
                 {
-                    jugador.y_vel -= VEL;
+                    jugador.y_vel -= jugador.max_vel;
                 }
                 if (evento.keyboard.keycode == ALLEGRO_KEY_A || evento.keyboard.keycode == ALLEGRO_KEY_LEFT)
                 {
-                    jugador.x_vel -= VEL * -1;
+                    jugador.x_vel -= jugador.max_vel * -1;
                 }
                 else if (evento.keyboard.keycode == ALLEGRO_KEY_D || evento.keyboard.keycode == ALLEGRO_KEY_RIGHT) 
                 {
-                    jugador.x_vel -= VEL;
+                    jugador.x_vel -= jugador.max_vel;
                 }
                 break;
             
             case ALLEGRO_EVENT_KEY_CHAR:
-                if(evento.keyboard.keycode == ALLEGRO_KEY_SPACE)
+                if (evento.keyboard.keycode == ALLEGRO_KEY_ENTER)
                 {
-                    if (mode == 1 && pausa == 0)
-                       crear_entidad(proyectiles_jugador, &num_proyectiles_jugador, PROYECTIL_JUGADOR, &jugador, NULL);
-                }
-                else if (evento.keyboard.keycode == ALLEGRO_KEY_ENTER)
-                {
+                    if (mode != 1)
+                    {
+                        num_inertes = 0;
+                        num_entidades = 0;
+                        num_proyectiles_enemigos = 0;
+                        num_proyectiles_jugador = 0;
+                    }
                     if (mode == 0)
                     {
                         if (ops == 0)
                         {
-                            num_inertes = 0;
-                            num_entidades = 0;
                             mode = 1;
-                            inicializar_modo(entidades, mode, &num_entidades, &jugador);
+                            modo_inicializar(entidades_no_vivas, mode, &num_inertes, &jugador);
                         }
                         else if (ops == 1)
                         {
-                            num_inertes = 0;
-                            num_entidades = 0;
                             mode = 2;
                         }
                         else if (ops == 2)
@@ -316,10 +403,8 @@ int main()
                     }
                     else if (mode == 1 && pausa == 1)
                     {
-                        num_inertes = 0;
-                        num_entidades = 0;
                         mode = 0;   
-                        inicializar_modo(entidades_no_vivas, mode, &num_entidades, NULL);      
+                        modo_inicializar(entidades_no_vivas, mode, &num_entidades, NULL);      
                     }
 
                 }
@@ -334,7 +419,7 @@ int main()
                         num_inertes = 0;
                         num_entidades = 0;
                         mode = 0;   
-                        inicializar_modo(entidades_no_vivas, mode, &num_entidades, NULL);  
+                        modo_inicializar(entidades_no_vivas, mode, &num_entidades, NULL);  
                     }        
                 }
                 break;

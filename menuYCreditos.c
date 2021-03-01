@@ -35,11 +35,11 @@ void dibujar_menu(struct Entidad entidades[], int *ops)
     al_draw_scaled_bitmap(imagenes[FONDO_2_IMAGEN], 0, 0, al_get_bitmap_width(imagenes[FONDO_2_IMAGEN]), al_get_bitmap_height(imagenes[FONDO_2_IMAGEN]), 0, 0 ,ANCHO, 424, 0);
 
     //Torre 1
-    dibujar_entidad(entidades[0]);
+    entidad_dibujar(entidades[0]);
     al_draw_scaled_bitmap(imagenes[TORRE_0_IMAGEN], 0, 0, al_get_bitmap_width(imagenes[TORRE_0_IMAGEN]), al_get_bitmap_height(imagenes[TORRE_0_IMAGEN]), 15, 190 ,140, 290 , 0);
 
     //Torre 2
-    dibujar_entidad(entidades[1]);
+    entidad_dibujar(entidades[1]);
 
 
     al_draw_scaled_bitmap(imagenes[TORRE_1_IMAGEN], 0, 0, al_get_bitmap_width(imagenes[TORRE_1_IMAGEN]), al_get_bitmap_height(imagenes[TORRE_1_IMAGEN]), 485, 190 ,140, 290 , 0);
