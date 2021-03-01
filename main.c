@@ -175,8 +175,8 @@ int main()
                         {
                             if (rand()%FPS == 3)
                             {
-                                //int tipo = rand()%4+2;
-                                entidad_crear(entidades, &num_entidades, HYDRA, NULL, NULL); 
+                                int tipo = rand()%4+2;
+                                entidad_crear(entidades, &num_entidades, tipo, NULL, NULL); 
                                 printf("%i\n", num_entidades);
                             }
                         }
