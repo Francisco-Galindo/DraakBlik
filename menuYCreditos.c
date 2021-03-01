@@ -42,7 +42,7 @@ void dibujar_menu(struct Entidad entidades[], int *ops)
     entidad_dibujar(entidades[1]);
 
 
-    al_draw_scaled_bitmap(imagenes[TORRE_1_IMAGEN], 0, 0, al_get_bitmap_width(imagenes[TORRE_1_IMAGEN]), al_get_bitmap_height(imagenes[TORRE_1_IMAGEN]), 485, 190 ,140, 290 , 0);
+    al_draw_scaled_bitmap(imagenes[TORRE_0_IMAGEN], 0, 0, al_get_bitmap_width(imagenes[TORRE_0_IMAGEN]), al_get_bitmap_height(imagenes[TORRE_0_IMAGEN]), 485, 190 ,140, 290 , ALLEGRO_FLIP_HORIZONTAL);
 
 
     al_draw_scaled_bitmap(imagenes[FONDO_3_IMAGEN], 0, 0, al_get_bitmap_width(imagenes[FONDO_3_IMAGEN]), al_get_bitmap_height(imagenes[FONDO_3_IMAGEN]), 0, 50 ,ANCHO, ALTO, 0);

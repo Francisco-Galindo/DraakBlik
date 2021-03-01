@@ -12,8 +12,10 @@
 
 #define ALTO 480
 #define ANCHO 640
-#define FPS 60
+#define FPS 144
 #define VEL 600
+
+#define PI 3.141592
 
 #define RAIZ_DOS 1.4142
 
@@ -246,8 +248,8 @@ void entidad_inicializar(struct Entidad *entidad, int tipo, struct Entidad *enti
             entidad->ancho = al_get_bitmap_width(entidad->sprite)*1;
             break;
         case PROYECTIL_HYDRA:
-            entidad->tipo = PROYECTIL_FENIX;
-            entidad->sprite = imagenes[PROYECTIL_3_IMAGEN];
+            entidad->tipo = PROYECTIL_HYDRA;
+            entidad->sprite = imagenes[PROYECTIL_2_IMAGEN];
             entidad->max_vel = ((VEL/FPS) * -2) / 2;
             entidad->x_vel = entidad->max_vel;
             entidad->vidas = 1;
@@ -296,7 +298,10 @@ void entidad_eliminar(struct Entidad entidades[], int indice, int *contador)
 // Su tarea es dibujar una entidad, basándose en sus coordenadasy tamaño
 void entidad_dibujar(struct Entidad entidad)
 {
-    al_draw_scaled_bitmap(entidad.sprite, 0, 0, al_get_bitmap_width(entidad.sprite), al_get_bitmap_height(entidad.sprite), entidad.x_pos, entidad.y_pos, entidad.ancho, entidad.alto, 0);
+    int flag = 0;
+    if (entidad.tipo == HYDRA || entidad.tipo == PROYECTIL_JUGADOR)
+        flag = ALLEGRO_FLIP_HORIZONTAL;
+    al_draw_scaled_bitmap(entidad.sprite, 0, 0, al_get_bitmap_width(entidad.sprite), al_get_bitmap_height(entidad.sprite), entidad.x_pos, entidad.y_pos, entidad.ancho, entidad.alto, flag);
 }
 
 
@@ -364,29 +369,29 @@ void modo_inicializar(struct Entidad entidades[], int modo, int *contador, struc
             entidad_crear(entidades, contador, GENERICO, NULL, imagenes[FONDO_0_IMAGEN]);
             entidades[0].x_pos = 0;
             entidades[0].y_pos = 0;
-            entidades[0].x_vel = (int)(VEL/-600);
+            entidades[0].x_vel = ((VEL/(float)FPS)/-8.0);
             entidad_crear(entidades, contador, GENERICO, NULL, imagenes[FONDO_0_IMAGEN]);
             entidades[1].x_pos = ANCHO * -1;
             entidades[1].y_pos = 0;
-            entidades[1].x_vel = (int)(VEL/-600);
+            entidades[1].x_vel = ((VEL/(float)FPS)/-8.0);
 
             entidad_crear(entidades, contador, GENERICO, NULL, imagenes[FONDO_3_IMAGEN]);
             entidades[2].x_pos = 0;
             entidades[2].y_pos = 0;
-            entidades[2].x_vel = (int)(VEL/-300);
+            entidades[2].x_vel = ((VEL/(float)FPS)/-5);
             entidad_crear(entidades, contador, GENERICO, NULL, imagenes[FONDO_3_IMAGEN]);
             entidades[3].x_pos = ANCHO * -1;
             entidades[3].y_pos = 0;
-            entidades[3].x_vel = (int)(VEL/-300);
+            entidades[3].x_vel = ((VEL/(float)FPS)/-5);
 
             entidad_crear(entidades, contador, GENERICO, NULL, imagenes[FONDO_2_IMAGEN]);
             entidades[4].x_pos = 0;
             entidades[4].y_pos = 0;
-            entidades[4].x_vel = (int)(VEL/-150);
+            entidades[4].x_vel = ((VEL/(float)FPS)/-4);
             entidad_crear(entidades, contador, GENERICO, NULL, imagenes[FONDO_2_IMAGEN]);
             entidades[5].x_pos = ANCHO * -1;
             entidades[5].y_pos = 0;
-            entidades[5].x_vel = (int)(VEL/-150);
+            entidades[5].x_vel = ((VEL/(float)FPS)/-4);
 
             entidad_inicializar(jugador, JUGADOR, NULL, NULL);
             break;
@@ -441,4 +446,11 @@ void entidad_animar(struct Entidad *entidad)
         default:
             break;
     }
+}
+
+// La sunbrutina cambia los valores de velocidad en cada eje para que, en la siguiente llamada a "entidad_mover()", la entidad se mueva en el ángulo deseado. 
+void cambiar_angulo_movimiento(struct Entidad *entidad, double angulo)
+{
+    entidad->x_vel = cos(angulo) * (entidad->max_vel);
+    entidad->y_vel = sin(angulo) * (entidad->max_vel);
 }

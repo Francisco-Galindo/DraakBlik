@@ -92,7 +92,7 @@ int main()
     // Creando los eventos que van a ser usados en el juego
     eventos = al_create_event_queue();
     framerate = al_create_timer(1.0/FPS);
-    anim = al_create_timer(0.15);
+    anim = al_create_timer(0.075);
     al_register_event_source(eventos, al_get_display_event_source(disp));
     al_register_event_source(eventos, al_get_keyboard_event_source());
     al_register_event_source(eventos, al_get_timer_event_source(framerate));
@@ -132,7 +132,7 @@ int main()
                 }
                 
 
-                if ((danado == 0 || pausa == 1) || al_get_timer_count(anim) % 2 == 0)
+                if ((danado == 0 || pausa == 1) || al_get_timer_count(anim) % 3 == 0)
                     entidad_dibujar(jugador);
 
                 if (pausa == 1)
@@ -165,6 +165,10 @@ int main()
                 {
                     if (pausa == 0 && mode == 1)
                     {
+                        if(danado == 1 && al_get_timer_count(framerate) == FPS/0.75)
+                        {
+                            danado = 0;
+                        }
                         // Spawneo de las entidades
                         if (num_entidades < 5)
                         {
@@ -207,9 +211,22 @@ int main()
                                 proyectiles_enemigo[indice].y_vel = dis_y/const_proporcionalidad;
                             }
                             // Las gárgolas dispararán aleatoriamente también
-                            else if (entidades[i].tipo == GARGOLA && rand()%FPS == 2)
+                            else if (entidades[i].tipo == GARGOLA && rand()%FPS*1.5 == 2)
                             {
                                 entidad_crear(proyectiles_enemigo, &num_proyectiles_enemigos, PROYECTIL_GARGOLA, &entidades[i], NULL);
+                            }
+                            else if (entidades[i].tipo == HYDRA && rand()%FPS*2 == 2)
+                            {                                
+                                // Creando tres proyectiles que se muevan en una manera similar a la de una escopeta
+                                entidad_crear(proyectiles_enemigo, &num_proyectiles_enemigos, PROYECTIL_HYDRA, &entidades[i], NULL);
+                                cambiar_angulo_movimiento(&proyectiles_enemigo[num_proyectiles_enemigos-1], PI/6.0);
+
+                                entidad_crear(proyectiles_enemigo, &num_proyectiles_enemigos, PROYECTIL_HYDRA, &entidades[i], NULL);
+                                cambiar_angulo_movimiento(&proyectiles_enemigo[num_proyectiles_enemigos-1], 0);
+
+                                entidad_crear(proyectiles_enemigo, &num_proyectiles_enemigos, PROYECTIL_HYDRA, &entidades[i], NULL);
+                                cambiar_angulo_movimiento(&proyectiles_enemigo[num_proyectiles_enemigos-1], PI/-6.0);
+
                             }
 
 
@@ -217,7 +234,7 @@ int main()
                             {
                                 al_play_sample(sonidos[DANO_SONIDO], 1, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
                                 danado = 1;
-                                al_set_timer_count(anim, 0);
+                                al_set_timer_count(framerate, 0);
                                 jugador.vidas --;
                                 entidades[i].vidas --;
                                 if (jugador.vidas <= 0);
@@ -259,7 +276,7 @@ int main()
                             {
                                 al_play_sample(sonidos[DANO_SONIDO], 1, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
                                 danado = 1;
-                                al_set_timer_count(anim, 0);
+                                al_set_timer_count(framerate, 0);
                                 jugador.vidas --;
                                 proyectiles_enemigo[i].vidas--;
                                 if (proyectiles_enemigo[i].vidas <= 0)
@@ -289,17 +306,11 @@ int main()
                     {
                         al_set_timer_count(anim, al_get_timer_count(anim) - 1);
                     }
-                    else if (mode == 1 && pausa == 0)
+                    else if (mode == 1 && pausa == 0 && al_get_timer_count(anim) % 2 == 0)
                     {
                         entidad_animar(&jugador);
                         for (int i = 0; i < num_entidades; i++)
                             entidad_animar(&entidades[i]);
-                        
-                        if(danado == 1 && al_get_timer_count(anim) == 10)
-                        {
-                            danado = 0;
-                            printf("lel: %i\n", danado);
-                        }
                     }
                 }
                 break;
@@ -380,22 +391,24 @@ int main()
             case ALLEGRO_EVENT_KEY_CHAR:
                 if (evento.keyboard.keycode == ALLEGRO_KEY_ENTER)
                 {
-                    if (mode != 1)
-                    {
-                        num_inertes = 0;
-                        num_entidades = 0;
-                        num_proyectiles_enemigos = 0;
-                        num_proyectiles_jugador = 0;
-                    }
                     if (mode == 0)
                     {
                         if (ops == 0)
                         {
+                            num_inertes = 0;
+                            num_entidades = 0;
+                            num_proyectiles_enemigos = 0;
+                            num_proyectiles_jugador = 0;
+                            danado = 0;
                             mode = 1;
                             modo_inicializar(entidades_no_vivas, mode, &num_inertes, &jugador);
                         }
                         else if (ops == 1)
                         {
+                            num_inertes = 0;
+                            num_entidades = 0;
+                            num_proyectiles_enemigos = 0;
+                            num_proyectiles_jugador = 0;
                             mode = 2;
                         }
                         else if (ops == 2)
@@ -403,6 +416,10 @@ int main()
                     }
                     else if (mode == 1 && pausa == 1)
                     {
+                        num_inertes = 0;
+                        num_entidades = 0;
+                        num_proyectiles_enemigos = 0;
+                        num_proyectiles_jugador = 0;
                         mode = 0;   
                         modo_inicializar(entidades_no_vivas, mode, &num_entidades, NULL);      
                     }
