@@ -296,6 +296,8 @@ int main()
                                     if (proyectiles_jugador[i].vidas <= 0);
                                         entidad_eliminar(proyectiles_jugador, i, &num_proyectiles_jugador);
                                     if (entidades[j].vidas <= 0)
+                                        if (entidades[j].tipo == FENIX&&jugador.vidas<=4)
+                                            jugador.vidas+=1;
                                         entidad_eliminar(entidades, j, &num_entidades);
                                 }
                             }
