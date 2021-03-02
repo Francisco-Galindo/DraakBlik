@@ -329,11 +329,14 @@ int main()
                                                 jugador_puntos += 10;
                                                 break; 
                                             case FENIX:
+                                                if (jugador.vidas <= 4)
+                                                    jugador.vidas += 1;
                                                 jugador_puntos += 15;
                                                 break;                                  
                                             default:
                                                 break;
                                         } 
+
                                         entidad_eliminar(entidades, j, &num_entidades);
                                     }
                                 }
