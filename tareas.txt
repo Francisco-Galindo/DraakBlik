@@ -9,9 +9,9 @@ Diseño
     **Movimiento de fuego en la pantalla de inicio.
   
  Audio
-  Pantalla de inicio (Musica de fondo y cuando seleccionemos una opcion)
-  Pantalla de juego (Musica de fondo y cuando hagamos daño)
-  Dragon (Cuando dispara)
+  **Pantalla de inicio (Musica de fondo y cuando seleccionemos una opcion)
+  Pantalla de juego (Musica de fondo) (Sergio)
+  Dragon (Cuando dispara y hace daño)
   
 Codigo
    **Programar las animaciones
@@ -20,13 +20,16 @@ Codigo
       **Menu (Jugar, Créditos, Salir)
    Programar pantalla de juego 
      Comportamiento de los enemigos 
-        Aparicion de los enemigos
-        Movimiento de los enemigos
-          Trayectoria de los disparos
+        **Aparicion de los enemigos
+        Movimiento de la Manticora (Sergio)
+        Vida del Fenix (Luna)
+          **Trayectoria de los disparos
+          Disparo Fenix (Zair)
         **Colisiones (Daño a los enemigos)
-     Movimiento de fondo
-   Resgistro puntos y usuario
-     Registro de nombre de usario
+     **Movimiento de fondo
+     
+   Resgistro puntos y usuario (Paco)
+     Registro de nombre de usario 
      Registro de puntaje mas alto y aparuicion en pantalla principal
      Registro de puntaje actual
      
