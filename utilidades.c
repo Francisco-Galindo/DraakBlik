@@ -242,11 +242,11 @@ void entidad_inicializar(struct Entidad *entidad, int tipo, struct Entidad *enti
             entidad->tipo = HYDRA;
             entidad->sprite = imagenes[HYDRA_IMAGEN_0];
             entidad->x_pos = ANCHO-160;
-            entidad->y_pos = 0;
             entidad->max_vel = (VEL/FPS)/3;
             entidad->vidas = 1;
             entidad->alto = al_get_bitmap_height(entidad->sprite)*1;
             entidad->ancho = al_get_bitmap_width(entidad->sprite)*1;
+            entidad->y_pos = 0;
             break;
         case PROYECTIL_HYDRA:
             entidad->tipo = PROYECTIL_HYDRA;
