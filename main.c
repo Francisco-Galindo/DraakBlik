@@ -243,15 +243,16 @@ int main()
                                     entidad_crear(proyectiles_enemigo, &num_proyectiles_enemigos, PROYECTIL_HYDRA, &entidades[i], NULL);
                                     cambiar_angulo_movimiento(&proyectiles_enemigo[num_proyectiles_enemigos-1], PI/-6.0);
                                 }                         
-                                if (entidades[i].y_pos = ALTO-entidades[i].alto && entidades[i].y_vel > 0)
+                                if (entidades[i].y_pos == 0 && entidades[i].y_vel <= 0)
                                 {
-                                    printf("CUM: %f\n", entidades[i].y_vel);
                                     cambiar_angulo_movimiento(&entidades[i], PI/2);
+                                    printf("CUM: %f\n", entidades[i].y_vel);
                                 }
-                                else if (entidades[i].y_pos = 0 && entidades[i].y_vel <= 0)
+                                else if (entidades[i].y_pos == ALTO-entidades[i].alto && entidades[i].y_vel >= 0)
                                 {
-                                    printf("LOL: %f\n", entidades[i].y_vel);
                                     cambiar_angulo_movimiento(&entidades[i], (3*PI)/2);
+
+                                    printf("LOL: %f\n", entidades[i].y_vel);
                                 }
                             }
                             else if (entidades[i].tipo == FENIX)

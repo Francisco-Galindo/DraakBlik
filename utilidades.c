@@ -241,7 +241,7 @@ void entidad_inicializar(struct Entidad *entidad, int tipo, struct Entidad *enti
         case HYDRA:
             entidad->tipo = HYDRA;
             entidad->sprite = imagenes[HYDRA_IMAGEN_0];
-            entidad->x_pos = ANCHO-100;
+            entidad->x_pos = ANCHO-160;
             entidad->y_pos = 0;
             entidad->max_vel = (VEL/FPS)/3;
             entidad->vidas = 1;
