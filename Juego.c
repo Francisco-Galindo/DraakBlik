@@ -6,17 +6,31 @@ void girar_hacia_entidad(struct Entidad *entidad_a_mover, struct Entidad entidad
 
     // Calculando la distancia entre el proyectil y el jugador
     float dis_x = (entidad_a_mover->x_pos + 
-                    (entidad_a_mover->ancho / 2)) - 
+                   (entidad_a_mover->ancho / 2)) - 
                     (entidad_destino.x_pos + (entidad_destino.ancho / 2));
     float dis_y = (entidad_a_mover->y_pos + 
-                    (entidad_a_mover->alto / 2)) - 
-                    (entidad_destino.y_pos + (entidad_destino.alto / 2));
+                   (entidad_a_mover->alto / 2)) - 
+                   (entidad_destino.y_pos + (entidad_destino.alto / 2));
     double dis_total = pow((dis_x * dis_x) + (dis_y * dis_y), 0.5);
 
     // Modificando la magnitud del vector para que sea igual a la velocidad máxima de movimiento de la entidad a mover
     double const_proporcionalidad = dis_total/entidad_a_mover->max_vel;
     entidad_a_mover->x_vel = dis_x/const_proporcionalidad;
     entidad_a_mover->y_vel = dis_y/const_proporcionalidad;
+}
+
+double distancia_hasta(struct Entidad entidad_uno, struct Entidad entidad_dos)
+{
+    // Calculando la distancia entre el proyectil y el jugador
+    float dis_x = (entidad_uno.x_pos + 
+                   (entidad_uno.ancho / 2)) - 
+                    (entidad_dos.x_pos + (entidad_dos.ancho / 2));
+    float dis_y = (entidad_uno.y_pos + 
+                   (entidad_uno.alto / 2)) - 
+                   (entidad_dos.y_pos + (entidad_dos.alto / 2));
+    double dis_total = pow((dis_x * dis_x) + (dis_y * dis_y), 0.5);
+
+    return dis_total;
 }
 
 int checar_colisiones(struct Entidad *entidad_uno, struct Entidad *entidad_dos, int *marcar_como_danado)

@@ -180,7 +180,7 @@ void entidad_inicializar(struct Entidad *entidad, int tipo, struct Entidad *enti
             entidad->sprite = imagenes[MANTICORA_IMAGEN_0];
             entidad->x_pos = ANCHO-100;
             entidad->y_pos = rand()%ALTO;
-            entidad->max_vel = 0;
+            entidad->max_vel = (VEL/FPS)/2.0;
             entidad->vidas = 1;
             entidad->alto = al_get_bitmap_height(entidad->sprite)*1.25;
             entidad->ancho = al_get_bitmap_width(entidad->sprite)*1.25;
@@ -201,7 +201,7 @@ void entidad_inicializar(struct Entidad *entidad, int tipo, struct Entidad *enti
             entidad->sprite = imagenes[FENIX_IMAGEN_0];
             entidad->x_pos = ANCHO-100;
             entidad->y_pos = rand()%ALTO;
-            entidad->max_vel = 0;
+            entidad->max_vel = (VEL/FPS)/2;
             entidad->vidas = 1;
             entidad->alto = al_get_bitmap_height(entidad->sprite)*0.1;
             entidad->ancho = al_get_bitmap_width(entidad->sprite)*0.1;
@@ -222,7 +222,7 @@ void entidad_inicializar(struct Entidad *entidad, int tipo, struct Entidad *enti
             entidad->sprite = imagenes[GARGOLA_IMAGEN_0];
             entidad->x_pos = ANCHO-100;
             entidad->y_pos = rand()%ALTO;
-            entidad->max_vel = 0;
+            entidad->max_vel = (VEL/FPS)/-3;
             entidad->vidas = 1;
             entidad->alto = al_get_bitmap_height(entidad->sprite)*1;
             entidad->ancho = al_get_bitmap_width(entidad->sprite)*1;
@@ -242,8 +242,8 @@ void entidad_inicializar(struct Entidad *entidad, int tipo, struct Entidad *enti
             entidad->tipo = HYDRA;
             entidad->sprite = imagenes[HYDRA_IMAGEN_0];
             entidad->x_pos = ANCHO-100;
-            entidad->y_pos = rand()%ALTO;
-            entidad->max_vel = 0;
+            entidad->y_pos = 0;
+            entidad->max_vel = (VEL/FPS)/3;
             entidad->vidas = 1;
             entidad->alto = al_get_bitmap_height(entidad->sprite)*1;
             entidad->ancho = al_get_bitmap_width(entidad->sprite)*1;

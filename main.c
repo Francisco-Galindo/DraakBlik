@@ -1,5 +1,4 @@
 
-
 #include "juego.c"
 
 struct Entidad jugador;
@@ -186,7 +185,17 @@ int main()
                         // Spawneo de las entidades
                         if (num_entidades < 5 && rand()%FPS == 3)
                         {
-                            int tipo = rand()%4+2;
+                            int tipo;
+                            int numero_aleatorio = rand()%16;
+                            if (numero_aleatorio >= 0 && numero_aleatorio <= 7)
+                                tipo = GARGOLA;
+                            else if (numero_aleatorio >= 8 && numero_aleatorio <= 11)
+                                tipo = MANTICORA;
+                            else if (numero_aleatorio >= 12 && numero_aleatorio <= 13)
+                                tipo = HYDRA;
+                            else 
+                                tipo = FENIX;
+
                             entidad_crear(entidades, &num_entidades, tipo, NULL, NULL); 
                             printf("%i\n", num_entidades);
                         }
@@ -197,31 +206,66 @@ int main()
                         // Actualización en el estado de los enemigos
                         for (int i = 0; i < num_entidades; i++)
                         {
+                            entidad_mover(&entidades[i], BLOQUEO);
                             // Hacer que las manticoras disparen en dirección del enemigo de manera aleatoria
-                            if (entidades[i].tipo == MANTICORA && rand()%(FPS * 2) == 2)
+                            if (entidades[i].tipo == MANTICORA)
                             {
-                                // Creando un proyectil que vaya hacia el jugador
-                                entidad_crear(proyectiles_enemigo, &num_proyectiles_enemigos, PROYECTIL_MANTICORA, &entidades[i], NULL);
-                                int indice = num_proyectiles_enemigos-1;
-                                girar_hacia_entidad(&proyectiles_enemigo[indice], jugador);
+                                if (rand()%(FPS * 2) == 2)
+                                {
+                                    // Creando un proyectil que vaya hacia el jugador
+                                    entidad_crear(proyectiles_enemigo, &num_proyectiles_enemigos, PROYECTIL_MANTICORA, &entidades[i], NULL);
+                                    int indice = num_proyectiles_enemigos-1;
+                                    girar_hacia_entidad(&proyectiles_enemigo[indice], jugador);
+                                }
+                                cambiar_angulo_movimiento(&entidades[i], PI/2.0);
+
+
                             }
                             // Las gárgolas dispararán aleatoriamente también
-                            else if (entidades[i].tipo == GARGOLA && rand()%FPS*1.5 == 2)
+                            else if (entidades[i].tipo == GARGOLA)
                             {
-                                entidad_crear(proyectiles_enemigo, &num_proyectiles_enemigos, PROYECTIL_GARGOLA, &entidades[i], NULL);
+                                if (rand()%FPS*1 == 2)
+                                    entidad_crear(proyectiles_enemigo, &num_proyectiles_enemigos, PROYECTIL_GARGOLA, &entidades[i], NULL);
+                                girar_hacia_entidad(&entidades[i], jugador);
                             }
-                            else if (entidades[i].tipo == HYDRA && rand()%FPS*2 == 2)
-                            {                                
-                                // Creando tres proyectiles que se muevan en una manera similar a la de una escopeta
-                                entidad_crear(proyectiles_enemigo, &num_proyectiles_enemigos, PROYECTIL_HYDRA, &entidades[i], NULL);
-                                cambiar_angulo_movimiento(&proyectiles_enemigo[num_proyectiles_enemigos-1], PI/6.0);
+                            else if (entidades[i].tipo == HYDRA)
+                            {
 
-                                entidad_crear(proyectiles_enemigo, &num_proyectiles_enemigos, PROYECTIL_HYDRA, &entidades[i], NULL);
-                                cambiar_angulo_movimiento(&proyectiles_enemigo[num_proyectiles_enemigos-1], 0);
+                                if (rand()%(int)(FPS*2.5) == 2)     
+                                {
+                                    // Creando tres proyectiles que se muevan en una manera similar a la de una escopeta
+                                    entidad_crear(proyectiles_enemigo, &num_proyectiles_enemigos, PROYECTIL_HYDRA, &entidades[i], NULL);
+                                    cambiar_angulo_movimiento(&proyectiles_enemigo[num_proyectiles_enemigos-1], PI/6.0);
 
-                                entidad_crear(proyectiles_enemigo, &num_proyectiles_enemigos, PROYECTIL_HYDRA, &entidades[i], NULL);
-                                cambiar_angulo_movimiento(&proyectiles_enemigo[num_proyectiles_enemigos-1], PI/-6.0);
+                                    entidad_crear(proyectiles_enemigo, &num_proyectiles_enemigos, PROYECTIL_HYDRA, &entidades[i], NULL);
+                                    cambiar_angulo_movimiento(&proyectiles_enemigo[num_proyectiles_enemigos-1], 0);
 
+                                    entidad_crear(proyectiles_enemigo, &num_proyectiles_enemigos, PROYECTIL_HYDRA, &entidades[i], NULL);
+                                    cambiar_angulo_movimiento(&proyectiles_enemigo[num_proyectiles_enemigos-1], PI/-6.0);
+                                }                         
+                                if (entidades[i].y_pos = ALTO-entidades[i].alto && entidades[i].y_vel > 0)
+                                {
+                                    printf("CUM: %f\n", entidades[i].y_vel);
+                                    cambiar_angulo_movimiento(&entidades[i], PI/2);
+                                }
+                                else if (entidades[i].y_pos = 0 && entidades[i].y_vel <= 0)
+                                {
+                                    printf("LOL: %f\n", entidades[i].y_vel);
+                                    cambiar_angulo_movimiento(&entidades[i], (3*PI)/2);
+                                }
+                            }
+                            else if (entidades[i].tipo == FENIX)
+                            {
+                                if (1)
+                                {
+                                    //asdf
+                                }
+                                girar_hacia_entidad(&entidades[i], jugador);
+                                if (distancia_hasta(entidades[i], jugador) > 300)
+                                {
+                                    entidades[i].x_vel *= -1;
+                                    entidades[i].y_vel *= -1;
+                                }
                             }
 
 
