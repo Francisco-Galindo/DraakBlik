@@ -2,6 +2,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <time.h>
+#include <math.h>
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_font.h>
@@ -12,7 +13,7 @@
 
 #define ALTO 480
 #define ANCHO 640
-#define FPS 144
+#define FPS 60
 #define VEL 600
 
 #define PI 3.141592
@@ -157,7 +158,7 @@ void entidad_inicializar(struct Entidad *entidad, int tipo, struct Entidad *enti
             entidad->tipo = JUGADOR;
             entidad->sprite = imagenes[JUGADOR_IMAGEN_0];
             entidad->max_vel = VEL/FPS;
-            entidad->vidas = 3;
+            entidad->vidas = 5;
             entidad->alto = al_get_bitmap_height(entidad->sprite)*1;
             entidad->ancho = al_get_bitmap_width(entidad->sprite)*1;
             entidad->x_pos = 0;
@@ -373,22 +374,22 @@ void modo_inicializar(struct Entidad entidades[], int modo, int *contador, struc
             entidades[1].y_pos = 0;
             entidades[1].x_vel = ((VEL/(float)FPS)/-8.0);
 
-            entidad_crear(entidades, contador, GENERICO, NULL, imagenes[FONDO_3_IMAGEN]);
+            entidad_crear(entidades, contador, GENERICO, NULL, imagenes[FONDO_2_IMAGEN]);
             entidades[2].x_pos = 0;
-            entidades[2].y_pos = 0;
+            entidades[2].y_pos = -50;
             entidades[2].x_vel = ((VEL/(float)FPS)/-5);
-            entidad_crear(entidades, contador, GENERICO, NULL, imagenes[FONDO_3_IMAGEN]);
+            entidad_crear(entidades, contador, GENERICO, NULL, imagenes[FONDO_2_IMAGEN]);
             entidades[3].x_pos = ANCHO * -1;
-            entidades[3].y_pos = 0;
+            entidades[3].y_pos = -50;
             entidades[3].x_vel = ((VEL/(float)FPS)/-5);
 
-            entidad_crear(entidades, contador, GENERICO, NULL, imagenes[FONDO_2_IMAGEN]);
+            entidad_crear(entidades, contador, GENERICO, NULL, imagenes[FONDO_3_IMAGEN]);
             entidades[4].x_pos = 0;
-            entidades[4].y_pos = 0;
+            entidades[4].y_pos = 50;
             entidades[4].x_vel = ((VEL/(float)FPS)/-4);
-            entidad_crear(entidades, contador, GENERICO, NULL, imagenes[FONDO_2_IMAGEN]);
+            entidad_crear(entidades, contador, GENERICO, NULL, imagenes[FONDO_3_IMAGEN]);
             entidades[5].x_pos = ANCHO * -1;
-            entidades[5].y_pos = 0;
+            entidades[5].y_pos = 50;
             entidades[5].x_vel = ((VEL/(float)FPS)/-4);
 
             entidad_inicializar(jugador, JUGADOR, NULL, NULL);
@@ -398,7 +399,7 @@ void modo_inicializar(struct Entidad entidades[], int modo, int *contador, struc
     }
 }
 
-
+// Esta subbrutina alterna entre los diferentes sprites que cada una de las entidades animadas tienen
 void entidad_animar(struct Entidad *entidad)
 {
     switch (entidad->tipo)
@@ -446,7 +447,7 @@ void entidad_animar(struct Entidad *entidad)
     }
 }
 
-// La sunbrutina cambia los valores de velocidad en cada eje para que, en la siguiente llamada a "entidad_mover()", la entidad se mueva en el ángulo deseado. 
+// La sunbrutina cambia los valores de velocidad en cada eje para que, en la siguiente llamada a "entidad_mover()", la entidad se mueva en el ángulo deseado (el ángulo debes estar en radianes). 
 void cambiar_angulo_movimiento(struct Entidad *entidad, double angulo)
 {
     entidad->x_vel = cos(angulo) * (entidad->max_vel);

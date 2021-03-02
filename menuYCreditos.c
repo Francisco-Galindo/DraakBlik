@@ -1,6 +1,6 @@
 #include "utilidades.c"
 
-ALLEGRO_COLOR color_evento(int ops, int prue)
+ALLEGRO_COLOR color_boton(int ops, int prue)
 {
     ALLEGRO_COLOR color_select;
     if (ops == prue)
@@ -9,20 +9,6 @@ ALLEGRO_COLOR color_evento(int ops, int prue)
         color_select= al_map_rgb(212, 122, 32);
 
     return color_select;
-}
-
-void dibujar_fuego(struct Entidad *entidad, ALLEGRO_BITMAP *imagen1, ALLEGRO_BITMAP *imagen2, ALLEGRO_BITMAP *imagen3)
-{
-    if(entidad->sprite == imagen1)
-    {
-        entidad->sprite = imagen2;
-    }
-    else if (entidad->sprite == imagen2)
-    {
-        entidad->sprite = imagen1;
-    }
-    else 
-        entidad->sprite = imagen1;
 }
 
 void dibujar_menu(struct Entidad entidades[], int *ops)
@@ -51,9 +37,9 @@ void dibujar_menu(struct Entidad entidades[], int *ops)
     al_draw_text(fuentes[FUENTE_TITULO_80],al_map_rgb(150,23,6), ANCHO/2, ALTO-470, ALLEGRO_ALIGN_CENTER, "DRAAK BLIK");
     
 
-    al_draw_text(fuentes[FUENTE_TITULO_50],color_evento(*ops,0), ANCHO/2, ALTO-280, ALLEGRO_ALIGN_CENTER, "JUGAR");
-    al_draw_text(fuentes[FUENTE_TITULO_50],color_evento(*ops,1), ANCHO/2, ALTO-180, ALLEGRO_ALIGN_CENTER, "CREDITOS");
-    al_draw_text(fuentes[FUENTE_TITULO_50],color_evento(*ops,2), ANCHO/2, ALTO-80, ALLEGRO_ALIGN_CENTER, "SALIR");
+    al_draw_text(fuentes[FUENTE_TITULO_50],color_boton(*ops,0), ANCHO/2, ALTO-280, ALLEGRO_ALIGN_CENTER, "JUGAR");
+    al_draw_text(fuentes[FUENTE_TITULO_50],color_boton(*ops,1), ANCHO/2, ALTO-180, ALLEGRO_ALIGN_CENTER, "CREDITOS");
+    al_draw_text(fuentes[FUENTE_TITULO_50],color_boton(*ops,2), ANCHO/2, ALTO-80, ALLEGRO_ALIGN_CENTER, "SALIR");
 }
 
 
