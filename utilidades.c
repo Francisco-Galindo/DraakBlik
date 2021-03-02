@@ -57,12 +57,18 @@ struct Entidad
     float ancho;
 };
 
+struct Usuario
+{
+    char nombre[16];
+    int puntaje;
+};
+
 
 enum imagenes {JUGADOR_IMAGEN_0, JUGADOR_IMAGEN_1, ICONO_IMAGEN, WALL_IMAGEN, MONT1_IMAGEN, MONT2_IMAGEN, LUNA_IMAGEN, DRAGO_LUNA_IMAGEN, FUEGO_0_IMAGEN, FUEGO_1_IMAGEN, FUEGO_2_IMAGEN, FONDO_0_IMAGEN, FONDO_1_IMAGEN, FONDO_2_IMAGEN, FONDO_3_IMAGEN, TORRE_0_IMAGEN, TORRE_1_IMAGEN, MANTICORA_IMAGEN_0, MANTICORA_IMAGEN_1, FENIX_IMAGEN_0, FENIX_IMAGEN_1, HYDRA_IMAGEN_0, HYDRA_IMAGEN_1, GARGOLA_IMAGEN_0, GARGOLA_IMAGEN_1, PROYECTIL_0_IMAGEN, PROYECTIL_1_IMAGEN, PROYECTIL_2_IMAGEN, PROYECTIL_3_IMAGEN};
 
 enum fuentes {FUENTE_60, FUENTE_40, FUENTE_20, FUENTE_15, FUENTE_TITULO_80, FUENTE_TITULO_50};
 
-enum sonidos {SELECCION_SONIDO, DANO_SONIDO, DISPARO_SONIDO};
+enum sonidos {MENU_TEMA, SELECCION_SONIDO, DANO_SONIDO, DISPARO_SONIDO};
 
 ALLEGRO_BITMAP *imagenes[30];
 ALLEGRO_FONT *fuentes[6];
@@ -132,6 +138,7 @@ void fuentes_cargar(int *fin)
 
 void sonidos_cargar(int *fin)
 {
+    sonidos[MENU_TEMA] = al_load_sample("Audio/SoundtrackMenu.mp3");
     sonidos[SELECCION_SONIDO] = al_load_sample("Audio/select.wav");
     sonidos[DANO_SONIDO] = al_load_sample("Audio/dano.wav");
     sonidos[DISPARO_SONIDO] = al_load_sample("Audio/disparo_sonido.wav");
@@ -152,10 +159,10 @@ void entidad_inicializar(struct Entidad *entidad, int tipo, struct Entidad *enti
     entidad->y_pos = 0;
     entidad->x_vel = 0;
     entidad->y_vel = 0;
+    entidad->tipo = tipo;
     switch (tipo)
     {
         case JUGADOR:
-            entidad->tipo = JUGADOR;
             entidad->sprite = imagenes[JUGADOR_IMAGEN_0];
             entidad->max_vel = VEL/FPS;
             entidad->vidas = 5;
@@ -165,7 +172,6 @@ void entidad_inicializar(struct Entidad *entidad, int tipo, struct Entidad *enti
             entidad->y_pos = ALTO/2 - (entidad->alto / 2);
             break;
         case PROYECTIL_JUGADOR:
-            entidad->tipo = PROYECTIL_JUGADOR;
             entidad->sprite = imagenes[PROYECTIL_0_IMAGEN];
             entidad->max_vel = (VEL/FPS) * 2;
             entidad->x_vel = entidad->max_vel;
@@ -176,7 +182,6 @@ void entidad_inicializar(struct Entidad *entidad, int tipo, struct Entidad *enti
             entidad->y_pos = entidad_origen->y_pos + (entidad_origen->alto / 2);
             break;
         case MANTICORA:
-            entidad->tipo = MANTICORA;
             entidad->sprite = imagenes[MANTICORA_IMAGEN_0];
             entidad->x_pos = ANCHO-100;
             entidad->y_pos = rand()%ALTO;
@@ -186,7 +191,6 @@ void entidad_inicializar(struct Entidad *entidad, int tipo, struct Entidad *enti
             entidad->ancho = al_get_bitmap_width(entidad->sprite)*1.25;
             break;
         case PROYECTIL_MANTICORA:
-            entidad->tipo = PROYECTIL_MANTICORA;
             entidad->sprite = imagenes[PROYECTIL_1_IMAGEN];
             entidad->max_vel = ((VEL/FPS) * -1);
             entidad->x_vel = entidad->max_vel;
@@ -197,7 +201,6 @@ void entidad_inicializar(struct Entidad *entidad, int tipo, struct Entidad *enti
             entidad->y_pos = entidad_origen->y_pos + (entidad_origen->alto / 2);
             break;
         case FENIX:
-            entidad->tipo = FENIX;
             entidad->sprite = imagenes[FENIX_IMAGEN_0];
             entidad->x_pos = ANCHO-100;
             entidad->y_pos = rand()%ALTO;
@@ -207,7 +210,6 @@ void entidad_inicializar(struct Entidad *entidad, int tipo, struct Entidad *enti
             entidad->ancho = al_get_bitmap_width(entidad->sprite)*0.1;
             break;
         case PROYECTIL_FENIX:
-            entidad->tipo = PROYECTIL_FENIX;
             entidad->sprite = imagenes[PROYECTIL_2_IMAGEN];
             entidad->max_vel = ((VEL/FPS) * -2) / 2;
             entidad->x_vel = entidad->max_vel;
@@ -218,7 +220,6 @@ void entidad_inicializar(struct Entidad *entidad, int tipo, struct Entidad *enti
             entidad->y_pos = entidad_origen->y_pos + (entidad_origen->alto / 2);
             break;
         case GARGOLA:
-            entidad->tipo = GARGOLA;
             entidad->sprite = imagenes[GARGOLA_IMAGEN_0];
             entidad->x_pos = ANCHO-100;
             entidad->y_pos = rand()%ALTO;
@@ -228,7 +229,6 @@ void entidad_inicializar(struct Entidad *entidad, int tipo, struct Entidad *enti
             entidad->ancho = al_get_bitmap_width(entidad->sprite)*1;
             break;
         case PROYECTIL_GARGOLA:
-            entidad->tipo = PROYECTIL_GARGOLA;
             entidad->sprite = imagenes[PROYECTIL_3_IMAGEN];
             entidad->max_vel = ((VEL/FPS) * -2) / 2;
             entidad->x_vel = entidad->max_vel;
@@ -239,7 +239,6 @@ void entidad_inicializar(struct Entidad *entidad, int tipo, struct Entidad *enti
             entidad->y_pos = entidad_origen->y_pos + (entidad_origen->alto / 2);
             break;
         case HYDRA:
-            entidad->tipo = HYDRA;
             entidad->sprite = imagenes[HYDRA_IMAGEN_0];
             entidad->x_pos = ANCHO-160;
             entidad->max_vel = (VEL/FPS)/3;
@@ -249,7 +248,6 @@ void entidad_inicializar(struct Entidad *entidad, int tipo, struct Entidad *enti
             entidad->y_pos = 0;
             break;
         case PROYECTIL_HYDRA:
-            entidad->tipo = PROYECTIL_HYDRA;
             entidad->sprite = imagenes[PROYECTIL_2_IMAGEN];
             entidad->max_vel = ((VEL/FPS) * -2) / 2;
             entidad->x_vel = entidad->max_vel;
@@ -260,7 +258,6 @@ void entidad_inicializar(struct Entidad *entidad, int tipo, struct Entidad *enti
             entidad->y_pos = entidad_origen->y_pos + (entidad_origen->alto / 2);
             break;
         case FUEGO:
-            entidad->tipo = FUEGO;
             entidad->sprite = imagenes[FUEGO_0_IMAGEN];
             entidad->max_vel = 0;
             entidad->alto = al_get_bitmap_height(entidad->sprite)*0.15;
@@ -324,16 +321,20 @@ int entidad_mover(struct Entidad *entidad, int comportamiento)
             entidad->x_pos = 0;
 
     }
-    else
-    {
-        if (entidad->y_pos > ALTO || entidad->y_pos < 0 - entidad->alto || 
+    else if (entidad->y_pos > ALTO || entidad->y_pos < 0 - entidad->alto || 
             entidad->x_pos > ANCHO|| entidad->x_pos < 0 - entidad->ancho) 
-        {
-            mov_valido = 0;
-        }
+    {
+        mov_valido = 0;
     }
 
     return mov_valido;
+}
+
+// La sunbrutina cambia los valores de velocidad en cada eje para que, en la siguiente llamada a "entidad_mover()", la entidad se mueva en el ángulo deseado (el ángulo debes estar en radianes). 
+void cambiar_angulo_movimiento(struct Entidad *entidad, double angulo)
+{
+    entidad->x_vel = cos(angulo) * (entidad->max_vel);
+    entidad->y_vel = sin(angulo) * (entidad->max_vel);
 }
 
 // Función que checa si una entidad colisiona con otra, se usa el algoritmo AABB.
@@ -356,6 +357,7 @@ void modo_inicializar(struct Entidad entidades[], int modo, int *contador, struc
     switch (modo)
     {
         case 0:
+            al_play_sample(sonidos[MENU_TEMA], 0.25, 0, 1, ALLEGRO_PLAYMODE_LOOP, NULL); 
             entidad_crear(entidades, contador, FUEGO, NULL, NULL);
             entidad_crear(entidades, contador, FUEGO, NULL, NULL);
             entidades[0].x_pos = 15;
@@ -447,9 +449,39 @@ void entidad_animar(struct Entidad *entidad)
     }
 }
 
-// La sunbrutina cambia los valores de velocidad en cada eje para que, en la siguiente llamada a "entidad_mover()", la entidad se mueva en el ángulo deseado (el ángulo debes estar en radianes). 
-void cambiar_angulo_movimiento(struct Entidad *entidad, double angulo)
+struct Usuario puntaje_mas_alto_obtener()
 {
-    entidad->x_vel = cos(angulo) * (entidad->max_vel);
-    entidad->y_vel = sin(angulo) * (entidad->max_vel);
+    struct Usuario usuario;
+    usuario.puntaje = -1;
+    strcpy(usuario.nombre, "error");
+
+
+    FILE *puntaje_archivo = fopen("puntaje.uwu", "rb");
+    if (puntaje_archivo == NULL)
+    {
+        printf("Error al cargar el archivo");
+        return usuario;
+    }
+    fread(&usuario, sizeof(struct Usuario), 1, puntaje_archivo);
+    printf("%i\n", usuario.puntaje);
+    fclose(puntaje_archivo);
+
+    return usuario; 
+}
+
+void puntaje_mas_alto_guardar(int puntaje, char *nombre)
+{
+    struct Usuario usuario;
+    usuario.puntaje = puntaje;
+    strcpy(usuario.nombre, nombre);
+    
+    FILE *puntaje_archivo = fopen("puntaje.uwu", "wb");
+    if (puntaje_archivo == NULL)
+    {
+        printf("Error al cargar el archivo");
+        return;
+    }    
+    rewind(puntaje_archivo);
+    fwrite(&usuario, sizeof(struct Usuario), 1, puntaje_archivo);
+    fclose(puntaje_archivo);
 }

@@ -11,8 +11,9 @@ ALLEGRO_COLOR color_boton(int ops, int prue)
     return color_select;
 }
 
-void dibujar_menu(struct Entidad entidades[], int *ops)
+void dibujar_menu(struct Entidad entidades[], int *ops, char *puntaje_mas_alto)
 {
+
     al_draw_scaled_bitmap(imagenes[LUNA_IMAGEN], 0, 0, al_get_bitmap_width(imagenes[LUNA_IMAGEN]), al_get_bitmap_height(imagenes[LUNA_IMAGEN]), 335, 95 ,200, 150, 0);
     al_draw_scaled_bitmap(imagenes[DRAGO_LUNA_IMAGEN], 0, 0, al_get_bitmap_width(imagenes[DRAGO_LUNA_IMAGEN]), al_get_bitmap_height(imagenes[DRAGO_LUNA_IMAGEN]), 365, 105 ,150, 114, 0);
 
@@ -40,6 +41,9 @@ void dibujar_menu(struct Entidad entidades[], int *ops)
     al_draw_text(fuentes[FUENTE_TITULO_50],color_boton(*ops,0), ANCHO/2, ALTO-280, ALLEGRO_ALIGN_CENTER, "JUGAR");
     al_draw_text(fuentes[FUENTE_TITULO_50],color_boton(*ops,1), ANCHO/2, ALTO-180, ALLEGRO_ALIGN_CENTER, "CREDITOS");
     al_draw_text(fuentes[FUENTE_TITULO_50],color_boton(*ops,2), ANCHO/2, ALTO-80, ALLEGRO_ALIGN_CENTER, "SALIR");
+
+    al_draw_text(fuentes[FUENTE_15], al_map_rgb(255, 255, 255), ANCHO-15, ALTO-30, ALLEGRO_ALIGN_RIGHT, puntaje_mas_alto);
+
 }
 
 

@@ -1,6 +1,7 @@
 
 #include "juego.c"
 
+
 struct Entidad jugador;
 struct Entidad entidades[128];
 struct Entidad proyectiles_jugador[128];
@@ -18,15 +19,17 @@ int main()
     ALLEGRO_TIMER *anim = NULL;
     ALLEGRO_TIMER *puntaje = NULL;
 
+
     int fin = 0, redibujar = 1, pausa = 1, mode = 0, jugador_puntos = 0, num_entidades = 0, num_inertes = 0, num_proyectiles_jugador = 0, num_proyectiles_enemigos = 0, ops = 0, danado = 0;
 
     char cadena_vidas[15];
     char cadena_puntaje[15];
+    char puntaje_mas_alto[16];
 
     // Cargando los elementos de Allegro
     if(!al_init())
     {
-        printf("Todo murio :(");
+        printf("Todo ha muerto :(");
         fin = 1;
     }
 
@@ -46,7 +49,7 @@ int main()
 
     if(!al_init_image_addon())
     {
-        printf("Imagenes error");
+        printf("Error al cargar complemento de imagenes");
         fin = 1;
     }
 
@@ -91,12 +94,19 @@ int main()
     al_register_event_source(eventos, al_get_timer_event_source(anim));
     al_register_event_source(eventos, al_get_timer_event_source(puntaje));
 
+
     entidad_inicializar(&jugador, JUGADOR, NULL, NULL);
+
+    struct Usuario highscore = puntaje_mas_alto_obtener();
+    sprintf(puntaje_mas_alto, "HIGHSCORE: %05i, LOL: %s", highscore.puntaje, highscore.nombre);
+
     modo_inicializar(entidades_no_vivas, mode, &num_inertes, NULL);
     al_start_timer(framerate);
     al_start_timer(anim);
     al_flip_display();
 
+
+    
 
     while (!fin)
     {
@@ -106,7 +116,7 @@ int main()
             al_clear_to_color(color_fondo);
             if (mode == 0)
             {
-                dibujar_menu(entidades_no_vivas, &ops);
+                dibujar_menu(entidades_no_vivas, &ops, puntaje_mas_alto);
             }
             else if (mode == 1)
             {
@@ -231,6 +241,7 @@ int main()
                             else if (entidades[i].tipo == HYDRA)
                             {
 
+                                // Disparando en momento aleatorios
                                 if (rand()%(int)(FPS*2.5) == 2)     
                                 {
                                     // Creando tres proyectiles que se muevan en una manera similar a la de una escopeta
@@ -242,7 +253,9 @@ int main()
 
                                     entidad_crear(proyectiles_enemigo, &num_proyectiles_enemigos, PROYECTIL_HYDRA, &entidades[i], NULL);
                                     cambiar_angulo_movimiento(&proyectiles_enemigo[num_proyectiles_enemigos-1], PI/-6.0);
-                                }                        
+                                }        
+
+                                // La Hydra se moverá de arriba hacia abajo en la pantalla                
                                 if (entidades[i].y_pos == 0 && entidades[i].y_vel <= 0)
                                 {
                                     cambiar_angulo_movimiento(&entidades[i], PI/2);
@@ -268,6 +281,7 @@ int main()
 
 
 
+                            // Colisiones de los enemigos con el jugador
                             if (danado == 0 && checar_colisiones(&jugador, &entidades[i], &danado))
                             {
                                 al_set_timer_count(framerate, 0);
@@ -275,12 +289,18 @@ int main()
                                 {
                                     pausa = 1;
                                     al_stop_timer(puntaje);
+                                    puntaje_mas_alto_guardar(jugador_puntos, "Pedro");
                                 }
                                 if (entidades[i].vidas <= 0)
-                                    entidad_eliminar(entidades, i, &num_entidades);
+                                {      
+                                    entidad_eliminar(entidades, i, &num_entidades);   
+                          
+                                }
+
                             }
 
                         }
+
 
 
                         // Actualización de estado de cada proyectil del jugador
@@ -296,7 +316,26 @@ int main()
                                     if (proyectiles_jugador[i].vidas <= 0);
                                         entidad_eliminar(proyectiles_jugador, i, &num_proyectiles_jugador);
                                     if (entidades[j].vidas <= 0)
+                                    {
+                                        switch (entidades[i].tipo)
+                                        {
+                                            case GARGOLA:
+                                                jugador_puntos += 3;
+                                                break;
+                                            case MANTICORA:
+                                                jugador_puntos += 5;
+                                                break;
+                                            case HYDRA:
+                                                jugador_puntos += 10;
+                                                break; 
+                                            case FENIX:
+                                                jugador_puntos += 15;
+                                                break;                                  
+                                            default:
+                                                break;
+                                        } 
                                         entidad_eliminar(entidades, j, &num_entidades);
+                                    }
                                 }
                             }
                             for (int j = 0; j < num_proyectiles_enemigos; j++)
@@ -311,6 +350,8 @@ int main()
                             }
                         }
 
+
+
                         // Actualización de estado de cada proyectil enemigo
                         for (int i = 0; i < num_proyectiles_enemigos; i++)
                         {
@@ -323,12 +364,15 @@ int main()
                                 if (jugador.vidas <= 0)
                                 {
                                     pausa = 1;
-                                    al_stop_timer(puntaje);                                    
+                                    al_stop_timer(puntaje); 
+                                    puntaje_mas_alto_guardar(jugador_puntos, "Pedro");                                   
                                 }
                                 if (proyectiles_enemigo[i].vidas <= 0)
                                     entidad_eliminar(proyectiles_enemigo, i, &num_proyectiles_enemigos);
                             }
                         }
+
+
 
                         // Actualizando estado de las entidades inertes
                         for (int i = 0; i < num_inertes; i++)
@@ -443,6 +487,7 @@ int main()
                 {
                     if (mode == 0)
                     {
+                        al_stop_samples();
                         if (ops == 0)
                         {
                             num_inertes = 0;
@@ -467,26 +512,33 @@ int main()
                     }
                     else if (mode == 1 && pausa == 1)
                     {
+                        al_stop_samples();
                         num_inertes = 0;
                         num_entidades = 0;
                         num_proyectiles_enemigos = 0;
                         num_proyectiles_jugador = 0;
                         mode = 0;   
                         jugador_puntos = 0;
+                        highscore = puntaje_mas_alto_obtener();
+                        sprintf(puntaje_mas_alto, "HIGHSCORE: %05i, LOL: %s", highscore.puntaje, highscore.nombre);
                         modo_inicializar(entidades_no_vivas, mode, &num_entidades, NULL);      
                     }
                 }
                 else if (evento.keyboard.keycode == ALLEGRO_KEY_ESCAPE)
                 {
-                    if (mode == 1)
+                    if (mode == 1 && jugador.vidas > 0)
                     {
                         pausa = !pausa;
                     }
                     else if (mode == 2) 
                     {
+                        al_stop_samples();
                         num_inertes = 0;
                         num_entidades = 0;
+                        num_proyectiles_enemigos = 0;
+                        num_proyectiles_jugador = 0;
                         mode = 0;   
+                        jugador_puntos = 0; 
                         modo_inicializar(entidades_no_vivas, mode, &num_entidades, NULL);  
                     }        
                 }
