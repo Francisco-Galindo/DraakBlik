@@ -210,7 +210,7 @@ void entidad_inicializar(struct Entidad *entidad, int tipo, struct Entidad *enti
             entidad->ancho = al_get_bitmap_width(entidad->sprite)*0.1;
             break;
         case PROYECTIL_FENIX:
-            entidad->sprite = imagenes[PROYECTIL_2_IMAGEN];
+            entidad->sprite = imagenes[PROYECTIL_1_IMAGEN];
             entidad->max_vel = ((VEL/FPS) * -2) / 2;
             entidad->x_vel = entidad->max_vel;
             entidad->vidas = 1;
