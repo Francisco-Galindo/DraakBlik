@@ -267,10 +267,13 @@ int main()
                             }
                             else if (entidades[i].tipo == FENIX)
                             {
-                                if (1)
+                                if  (rand()%(FPS*2) == 2)
                                 {
-                                    //asdf
+                                    //Creando el disparo del fenix
+                                        entidad_crear(proyectiles_enemigo, &num_proyectiles_enemigos, PROYECTIL_FENIX, &entidades[i], NULL);
+                                    girar_hacia_entidad(&proyectiles_enemigo[num_proyectiles_enemigos-1], jugador);
                                 }
+                                
                                 girar_hacia_entidad(&entidades[i], jugador);
                                 if (distancia_hasta(entidades[i], jugador) > 300)
                                 {
