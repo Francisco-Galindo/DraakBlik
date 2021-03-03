@@ -18,22 +18,32 @@ Codigo
       **Movimiento de loss personajes (Movimiento de las alas)
    **Programar la pantalla de inicio
       **Menu (Jugar, Créditos, Salir)
-   Programar pantalla de juego 
-     Comportamiento de los enemigos 
+     Programar pantalla de pausa (Paco)
+   **Programar pantalla de juego 
+   
+     **Comportamiento de los enemigos 
         **Aparicion de los enemigos
-        Movimiento de la Manticora (Sergio)
+        Explosión de los enemigos(Sergio)
+        **Movimiento de la Manticora (Sergio)
         Vida del Fenix (Luna)
           **Trayectoria de los disparos
-          Disparo Fenix (Zair)
+          **Disparo Fenix (Zair)
         **Colisiones (Daño a los enemigos)
      **Movimiento de fondo
      
-   Resgistro puntos y usuario (Paco)
-     Registro de nombre de usario 
-     Registro de puntaje mas alto y aparuicion en pantalla principal
-     Registro de puntaje actual
      
-
+   **Resgistro puntos (Paco)
+     **Registro de puntaje mas alto y aparuicion en pantalla principal
+     
+ Presentación 
+     Redacatar guión (Zair)
+     Diseño
+ Video
+     Edición (Paco)
+     Grabación 
+     
+     
+     
         
         
         
