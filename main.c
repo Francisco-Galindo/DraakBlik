@@ -98,7 +98,7 @@ int main()
     entidad_inicializar(&jugador, JUGADOR, NULL, NULL);
 
     struct Usuario highscore = puntaje_mas_alto_obtener();
-    sprintf(puntaje_mas_alto, "HIGHSCORE: %05i, LOL: %s", highscore.puntaje, highscore.nombre);
+    sprintf(puntaje_mas_alto, "HIGHSCORE: %05i  USUARIO: %s", highscore.puntaje, highscore.nombre);
 
     modo_inicializar(entidades_no_vivas, mode, &num_inertes, NULL);
     al_start_timer(framerate);
@@ -152,18 +152,17 @@ int main()
                 {
                     if (jugador.vidas > 0)
                     {
-                        al_draw_text(fuentes[FUENTE_60], al_map_rgb(255, 255, 255), ANCHO/2, ALTO/2.5, ALLEGRO_ALIGN_CENTRE, "PAUSA");
-                        al_draw_text(fuentes[FUENTE_15], al_map_rgb(255, 255, 255), ANCHO/2, ALTO/1.5, ALLEGRO_ALIGN_CENTRE, "PRESIONA ENTER PARA IR AL MENU");
+                        al_draw_text(fuentes[FUENTE_60], al_map_rgb(245, 206, 66), ANCHO/2, ALTO/2.5, ALLEGRO_ALIGN_CENTRE, "PAUSA");
+                        al_draw_text(fuentes[FUENTE_15], al_map_rgb(245, 206, 66), ANCHO/2, ALTO/1.5, ALLEGRO_ALIGN_CENTRE, "PRESIONA ENTER PARA IR AL MENU");
                     }
                     else
                     {
-                        al_draw_text(fuentes[FUENTE_40], al_map_rgb(255, 255, 255), ANCHO/2, ALTO/2.5, ALLEGRO_ALIGN_CENTRE, "EL JUEGO HA");  
-                        al_draw_text(fuentes[FUENTE_40], al_map_rgb(255, 255, 255), ANCHO/2, ALTO/2.5+40, ALLEGRO_ALIGN_CENTRE, "TERMINADO"); 
+                        al_draw_text(fuentes[FUENTE_40], al_map_rgb(217, 4, 4), ANCHO/2, ALTO/2.5, ALLEGRO_ALIGN_CENTRE, "EL JUEGO HA");  
+                        al_draw_text(fuentes[FUENTE_40], al_map_rgb(217, 4, 4), ANCHO/2, ALTO/2.5+40, ALLEGRO_ALIGN_CENTRE, "TERMINADO"); 
 
-                        al_draw_text(fuentes[FUENTE_15], al_map_rgb(255, 255, 255), ANCHO/2, ALTO/1.5, ALLEGRO_ALIGN_CENTRE, "PRESIONA ENTER PARA IR AL MENU");                    
+                        al_draw_text(fuentes[FUENTE_15], al_map_rgb(245, 206, 66), ANCHO/2, ALTO/1.5, ALLEGRO_ALIGN_CENTRE, "PRESIONA ENTER PARA IR AL MENU");                    
                     }
                 }
-
             }
             else if (mode == 2)
             {
@@ -482,11 +481,13 @@ int main()
                         }
                         else if (ops == 1)
                         {
+                            
                             num_inertes = 0;
                             num_entidades = 0;
                             num_proyectiles_enemigos = 0;
                             num_proyectiles_jugador = 0;
                             mode = 2;
+                            modo_inicializar(entidades_no_vivas, mode, &num_entidades, NULL);
                         }
                         else if (ops == 2)
                             fin = 1;
