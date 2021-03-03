@@ -304,6 +304,11 @@ int main()
                                     if (puntaje_mas_alto_obtener() < jugador_puntos)
                                         puntaje_mas_alto_guardar(jugador_puntos);
                                 }
+                                //Dibuja una explosión en las coordenas de donde estaba el enemigo
+                                entidad_crear(entidades_no_vivas,&num_inertes, GENERICO, NULL,imagenes[EXPLOSION_IMAGEN]);
+                                entidades_no_vivas[num_inertes-1].x_pos = entidades[i].x_pos;
+                                entidades_no_vivas[num_inertes-1].y_pos = entidades[i].y_pos;
+                                
                                 entidad_destruir_si_esta_muerta(&entidades[i], entidades, i, &num_entidades, &jugador_puntos, &jugador);
                             }
 
@@ -324,6 +329,12 @@ int main()
                                     entidad_destruir_si_esta_muerta(&proyectiles_jugador[i], proyectiles_jugador, i, &num_proyectiles_jugador, NULL, NULL);
                                     if(entidades[j].tipo==FENIX&&jugador.vidas<=4)
                                         jugador.vidas+=1;
+                                
+                                    //Dibuja una explosión en las coordenas de donde estaba el enemigo
+                                    entidad_crear(entidades_no_vivas,&num_inertes, GENERICO, NULL,imagenes[EXPLOSION_IMAGEN]);
+                                    entidades_no_vivas[num_inertes-1].x_pos = entidades[i].x_pos;
+                                    entidades_no_vivas[num_inertes-1].y_pos = entidades[i].y_pos;
+                                    
                                     entidad_destruir_si_esta_muerta(&entidades[j], entidades, j, &num_entidades, &jugador_puntos, &jugador);
                                 }
                             }
@@ -388,6 +399,15 @@ int main()
                         entidad_animar(&jugador);
                         for (int i = 0; i < num_entidades; i++)
                             entidad_animar(&entidades[i]);
+                    }
+                    else if (mode == 1 && pausa == 0 && al_get_timer_count(anim) % 3 == 0)
+                    {
+                        for(int i=0; i< 64; i++)
+                        {
+                            if(entidades_no_vivas[i].sprite == imagenes[EXPLOSION_IMAGEN])
+                                entidad_eliminar(entidades_no_vivas,i,&num_inertes);
+
+                        }
                     }
                 }
                 else if (evento.timer.source == puntaje && pausa == 0)
