@@ -200,9 +200,9 @@ int main()
                             // Eligiendo el tipo de entidad que se va a crear, dependiendo del numero aleatorio generado.
                             if (numero_aleatorio >= 0 && numero_aleatorio <= 7)
                                 tipo = GARGOLA;
-                            else if (numero_aleatorio >= 8 && numero_aleatorio <= 11)
+                            else if (numero_aleatorio >= 9 && numero_aleatorio <= 12)
                                 tipo = MANTICORA;
-                            else if (numero_aleatorio >= 12 && numero_aleatorio <= 13)
+                            else if (numero_aleatorio >= 13 && numero_aleatorio <= 14)
                                 tipo = HYDRA;
                             else 
                                 tipo = FENIX;
