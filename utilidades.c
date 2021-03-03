@@ -189,6 +189,8 @@ void entidad_inicializar(struct Entidad *entidad, int tipo, struct Entidad *enti
             entidad->vidas = 1;
             entidad->alto = al_get_bitmap_height(entidad->sprite)*1.25;
             entidad->ancho = al_get_bitmap_width(entidad->sprite)*1.25;
+            entidad->x_vel = entidad->max_vel/2;
+            entidad->y_vel = entidad->max_vel/2;
             break;
         case PROYECTIL_MANTICORA:
             entidad->sprite = imagenes[PROYECTIL_1_IMAGEN];
