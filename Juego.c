@@ -54,18 +54,18 @@ int checar_colisiones(struct Entidad *entidad_uno, struct Entidad *entidad_dos, 
     return colisionaron;
 }
 
-
+// Hace lo que su nombre indica, 
 int entidad_destruir_si_esta_muerta(struct Entidad *entidad, struct Entidad entidades[], int indice, int *contador_de_entidades, int *puntaje, struct Entidad *jugador)
 {
-    int tipo = entidad->tipo;
-    if (entidad->vidas <= 0)
+    int tipo = entidades[indice].tipo;
+    if (entidades[indice].vidas <= 0)
     {
         if (puntaje != NULL && jugador != NULL)
         {
             int puntaje_nuevo = *puntaje;
             if (jugador->vidas > 0)
             {
-                switch (entidad->tipo)
+                switch (tipo)
                 {
                     case GARGOLA:
                         puntaje_nuevo += 3;
