@@ -228,7 +228,16 @@ int main()
                                     int indice = num_proyectiles_enemigos-1;
                                     girar_hacia_entidad(&proyectiles_enemigo[indice], jugador);
                                 }
-                                cambiar_angulo_movimiento(&entidades[i], PI/2.0);
+                                
+                                if (entidades[i].y_pos >= ALTO-entidades[i].alto || entidades[i].y_pos <= 0)
+                                {
+                                    entidades[i].y_vel *= -1;
+                                }
+                                
+                                if (entidades[i].x_pos >= ANCHO-entidades[i].ancho || entidades[i].x_pos <= 0)
+                                {
+                                    entidades[i].x_vel *= -1;
+                                }
 
                             }
                             // Las gárgolas dispararán aleatoriamente también
