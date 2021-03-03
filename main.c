@@ -181,6 +181,7 @@ int main()
         switch(evento.type)
         {
             case ALLEGRO_EVENT_TIMER:
+            
                 // Cada que un nuevo cuadro deba ser dibujado (indicado por el
                 // timer "framerate"), realizar cálculos para actualizar el 
                 // estado del juego, para luego cambiar el valor de la variable de dibujar a 1.
@@ -229,7 +230,6 @@ int main()
                                 }
                                 cambiar_angulo_movimiento(&entidades[i], PI/2.0);
 
-
                             }
                             // Las gárgolas dispararán aleatoriamente también
                             else if (entidades[i].tipo == GARGOLA)
@@ -270,7 +270,7 @@ int main()
                                 if  (rand()%(FPS*2) == 2)
                                 {
                                     //Creando el disparo del fenix
-                                        entidad_crear(proyectiles_enemigo, &num_proyectiles_enemigos, PROYECTIL_FENIX, &entidades[i], NULL);
+                                    entidad_crear(proyectiles_enemigo, &num_proyectiles_enemigos, PROYECTIL_FENIX, &entidades[i], NULL);
                                     girar_hacia_entidad(&proyectiles_enemigo[num_proyectiles_enemigos-1], jugador);
                                 }
                                 
@@ -282,8 +282,6 @@ int main()
                                 }
                             }
 
-
-
                             // Colisiones de los enemigos con el jugador
                             if (danado == 0 && checar_colisiones(&jugador, &entidades[i], &danado))
                             {
@@ -294,12 +292,7 @@ int main()
                                     al_stop_timer(puntaje);
                                     puntaje_mas_alto_guardar(jugador_puntos, "Pedro");
                                 }
-                                if (entidades[i].vidas <= 0)
-                                {      
-                                    entidad_eliminar(entidades, i, &num_entidades);   
-                          
-                                }
-
+                                entidad_destruir_si_esta_muerta(&entidades[i], entidades, i, &num_entidades, &jugador_puntos);
                             }
 
                         }
@@ -316,42 +309,16 @@ int main()
                             {
                                 if (checar_colisiones(&proyectiles_jugador[i], &entidades[j], NULL))
                                 {
-                                    if (proyectiles_jugador[i].vidas <= 0);
-                                        entidad_eliminar(proyectiles_jugador, i, &num_proyectiles_jugador);
-                                    if (entidades[j].vidas <= 0)
-                                    {
-                                        switch (entidades[i].tipo)
-                                        {
-                                            case GARGOLA:
-                                                jugador_puntos += 3;
-                                                break;
-                                            case MANTICORA:
-                                                jugador_puntos += 5;
-                                                break;
-                                            case HYDRA:
-                                                jugador_puntos += 10;
-                                                break; 
-                                            case FENIX:
-                                                if (jugador.vidas <= 4)
-                                                    jugador.vidas += 1;
-                                                jugador_puntos += 15;
-                                                break;                                  
-                                            default:
-                                                break;
-                                        } 
-
-                                        entidad_eliminar(entidades, j, &num_entidades);
-                                    }
+                                    entidad_destruir_si_esta_muerta(&proyectiles_jugador[i], proyectiles_jugador, i, &num_proyectiles_jugador, NULL);
+                                    entidad_destruir_si_esta_muerta(&entidades[j], entidades, j, &num_entidades, &jugador_puntos);
                                 }
                             }
                             for (int j = 0; j < num_proyectiles_enemigos; j++)
                             {
                                 if (checar_colisiones(&proyectiles_jugador[i], &proyectiles_enemigo[j], NULL))
                                 {
-                                    if (proyectiles_jugador[i].vidas <= 0);
-                                        entidad_eliminar(proyectiles_jugador, i, &num_proyectiles_jugador);
-                                    if (proyectiles_enemigo[j].vidas <= 0)
-                                        entidad_eliminar(proyectiles_enemigo, j, &num_proyectiles_enemigos);
+                                    entidad_destruir_si_esta_muerta(&proyectiles_jugador[i], proyectiles_jugador, i, &num_proyectiles_jugador, NULL);
+                                    entidad_destruir_si_esta_muerta(&proyectiles_enemigo[j], proyectiles_enemigo, j, &num_proyectiles_enemigos, NULL);
                                 }
                             }
                         }
@@ -373,8 +340,7 @@ int main()
                                     al_stop_timer(puntaje); 
                                     puntaje_mas_alto_guardar(jugador_puntos, "Pedro");                                   
                                 }
-                                if (proyectiles_enemigo[i].vidas <= 0)
-                                    entidad_eliminar(proyectiles_enemigo, i, &num_proyectiles_enemigos);
+                                entidad_destruir_si_esta_muerta(&proyectiles_enemigo[i], proyectiles_enemigo, i, &num_proyectiles_enemigos, NULL);
                             }
                         }
 

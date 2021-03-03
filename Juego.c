@@ -54,3 +54,38 @@ int checar_colisiones(struct Entidad *entidad_uno, struct Entidad *entidad_dos, 
     return colisionaron;
 }
 
+int entidad_destruir_si_esta_muerta(struct Entidad *entidad, struct Entidad entidades[], int indice, int *contador_de_entidades, int *puntaje)
+{
+    int tipo = entidad->tipo;
+    if (entidad->vidas <= 0)
+    {
+        if (puntaje != NULL)
+        {
+            int puntaje_nuevo = *puntaje;
+            switch (entidad->tipo)
+            {
+                case GARGOLA:
+                    puntaje_nuevo += 3;
+                    break;
+                case MANTICORA:
+                    puntaje_nuevo += 5;
+                    break;
+                case HYDRA:
+                    puntaje_nuevo += 10;
+                    break; 
+                case FENIX:
+                    //if (jugador.vidas <= 4)
+                        //jugador.vidas += 1;
+                    puntaje_nuevo += 15;
+                    break;                                  
+                default:
+                    break;
+            } 
+            *puntaje = puntaje_nuevo;
+        }
+
+        entidad_eliminar(entidades, indice, contador_de_entidades);
+        return tipo;
+    }
+    return 0;
+}
