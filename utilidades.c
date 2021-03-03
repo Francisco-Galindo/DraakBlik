@@ -66,13 +66,13 @@ struct Usuario
 
 enum imagenes {JUGADOR_IMAGEN_0, JUGADOR_IMAGEN_1, ICONO_IMAGEN, WALL_IMAGEN, MONT1_IMAGEN, MONT2_IMAGEN, LUNA_IMAGEN, DRAGO_LUNA_IMAGEN, FUEGO_0_IMAGEN, FUEGO_1_IMAGEN, FUEGO_2_IMAGEN, FONDO_0_IMAGEN, FONDO_1_IMAGEN, FONDO_2_IMAGEN, FONDO_3_IMAGEN, TORRE_0_IMAGEN, TORRE_1_IMAGEN, MANTICORA_IMAGEN_0, MANTICORA_IMAGEN_1, FENIX_IMAGEN_0, FENIX_IMAGEN_1, HYDRA_IMAGEN_0, HYDRA_IMAGEN_1, GARGOLA_IMAGEN_0, GARGOLA_IMAGEN_1, PROYECTIL_0_IMAGEN, PROYECTIL_1_IMAGEN, PROYECTIL_2_IMAGEN, PROYECTIL_3_IMAGEN};
 
-enum fuentes {FUENTE_60, FUENTE_40, FUENTE_20, FUENTE_15, FUENTE_TITULO_80, FUENTE_TITULO_50};
+enum fuentes {FUENTE_60, FUENTE_40, FUENTE_20, FUENTE_15,FUENTE_TITULO_20, FUENTE_TITULO_80, FUENTE_TITULO_50,};
 
-enum sonidos {MENU_TEMA, SELECCION_SONIDO, DANO_SONIDO, DISPARO_SONIDO};
+enum sonidos {MENU_TEMA, CREDITOS_TEMA, JUEGO_TEMA, SELECCION_SONIDO, DANO_SONIDO, DISPARO_SONIDO};
 
 ALLEGRO_BITMAP *imagenes[30];
-ALLEGRO_FONT *fuentes[6];
-ALLEGRO_SAMPLE *sonidos[10];
+ALLEGRO_FONT *fuentes[7];
+ALLEGRO_SAMPLE *sonidos[11];
 
 
 void imagenes_cargar(int *fin)
@@ -124,6 +124,7 @@ void fuentes_cargar(int *fin)
     fuentes[FUENTE_40] = al_load_font("Fuentes/PressStart2P.ttf", 40, 0);
     fuentes[FUENTE_20] = al_load_font("Fuentes/PressStart2P.ttf", 20, 0);
     fuentes[FUENTE_15] = al_load_font("Fuentes/PressStart2P.ttf", 15, 0);
+    fuentes[FUENTE_TITULO_20] = al_load_font("Fuentes/PerfectDOSVGA437.ttf", 20, 0);
     fuentes[FUENTE_TITULO_80] = al_load_font("Fuentes/PerfectDOSVGA437.ttf", 80, 0);
     fuentes[FUENTE_TITULO_50] = al_load_font("Fuentes/PerfectDOSVGA437.ttf", 50, 0);
     for (int i = 0; i < FUENTE_TITULO_50; i++)
@@ -139,6 +140,8 @@ void fuentes_cargar(int *fin)
 void sonidos_cargar(int *fin)
 {
     sonidos[MENU_TEMA] = al_load_sample("Audio/SoundtrackMenu.mp3");
+    sonidos[CREDITOS_TEMA] = al_load_sample("Audio/SoundtrackCreditos.mp3");
+    sonidos[JUEGO_TEMA] = al_load_sample("Audio/SoundtrackJuego2.mp3");
     sonidos[SELECCION_SONIDO] = al_load_sample("Audio/select.wav");
     sonidos[DANO_SONIDO] = al_load_sample("Audio/dano.wav");
     sonidos[DISPARO_SONIDO] = al_load_sample("Audio/disparo_sonido.wav");
@@ -369,6 +372,7 @@ void modo_inicializar(struct Entidad entidades[], int modo, int *contador, struc
             entidades[1].y_pos = 105;
             break;
         case 1:
+            al_play_sample(sonidos[JUEGO_TEMA], 0.25, 0, 1, ALLEGRO_PLAYMODE_LOOP, NULL); 
             entidad_crear(entidades, contador, GENERICO, NULL, imagenes[FONDO_0_IMAGEN]);
             entidades[0].x_pos = 0;
             entidades[0].y_pos = 0;
@@ -397,6 +401,9 @@ void modo_inicializar(struct Entidad entidades[], int modo, int *contador, struc
             entidades[5].x_vel = ((VEL/(float)FPS)/-4);
 
             entidad_inicializar(jugador, JUGADOR, NULL, NULL);
+            break;
+        case 2:
+            al_play_sample(sonidos[CREDITOS_TEMA], 0.25, 0, 1, ALLEGRO_PLAYMODE_LOOP, NULL);
             break;
         default:
             break;
