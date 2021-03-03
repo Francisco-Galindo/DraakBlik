@@ -35,14 +35,17 @@ void dibujar_menu(struct Entidad entidades[], int *ops, char *puntaje_mas_alto)
     al_draw_scaled_bitmap(imagenes[FONDO_3_IMAGEN], 0, 0, al_get_bitmap_width(imagenes[FONDO_3_IMAGEN]), al_get_bitmap_height(imagenes[FONDO_3_IMAGEN]), 0, 50 ,ANCHO, ALTO, 0);
     
     
-    al_draw_text(fuentes[FUENTE_TITULO_80],al_map_rgb(150,23,6), ANCHO/2, ALTO-470, ALLEGRO_ALIGN_CENTER, "DRAAK BLIK");
+    al_draw_text(fuentes[FUENTE_TITULO_80],al_map_rgb(150, 23, 6), ANCHO/2, ALTO-470, ALLEGRO_ALIGN_CENTER, "DRAAK BLIK");
     
 
     al_draw_text(fuentes[FUENTE_TITULO_50],color_boton(*ops,0), ANCHO/2, ALTO-307, ALLEGRO_ALIGN_CENTER, "JUGAR");
     al_draw_text(fuentes[FUENTE_TITULO_50],color_boton(*ops,1), ANCHO/2, ALTO-207, ALLEGRO_ALIGN_CENTER, "CREDITOS");
     al_draw_text(fuentes[FUENTE_TITULO_50],color_boton(*ops,2), ANCHO/2, ALTO-107, ALLEGRO_ALIGN_CENTER, "SALIR");
 
-    al_draw_text(fuentes[FUENTE_TITULO_20], al_map_rgb(217, 4, 4), ANCHO-150, ALTO-30, ALLEGRO_ALIGN_RIGHT, puntaje_mas_alto);
+
+
+    al_draw_text(fuentes[FUENTE_15], al_map_rgb(150, 23, 6), ANCHO-15, ALTO-30, ALLEGRO_ALIGN_RIGHT, puntaje_mas_alto);
+    al_draw_text(fuentes[FUENTE_15], al_map_rgb(150, 23, 6), 15, ALTO-30, ALLEGRO_ALIGN_LEFT, "UwUntu 2021");
 
 }
 

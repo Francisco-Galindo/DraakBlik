@@ -97,8 +97,8 @@ int main()
 
     entidad_inicializar(&jugador, JUGADOR, NULL, NULL);
 
-    struct Usuario highscore = puntaje_mas_alto_obtener();
-    sprintf(puntaje_mas_alto, "HIGHSCORE: %05i  USUARIO: %s", highscore.puntaje, highscore.nombre);
+    int highscore = puntaje_mas_alto_obtener();
+    sprintf(puntaje_mas_alto, "HIGHSCORE: %05i", highscore);
 
     modo_inicializar(entidades_no_vivas, mode, &num_inertes, NULL);
     al_start_timer(framerate);
@@ -197,6 +197,7 @@ int main()
                         {
                             int tipo;
                             int numero_aleatorio = rand()%16;
+                            // Eligiendo el tipo de entidad que se va a crear, dependiendo del numero aleatorio generado.
                             if (numero_aleatorio >= 0 && numero_aleatorio <= 7)
                                 tipo = GARGOLA;
                             else if (numero_aleatorio >= 8 && numero_aleatorio <= 11)
@@ -207,7 +208,6 @@ int main()
                                 tipo = FENIX;
 
                             entidad_crear(entidades, &num_entidades, tipo, NULL, NULL); 
-                            printf("%i\n", num_entidades);
                         }
 
                         // Movimiento del jugador
@@ -217,9 +217,9 @@ int main()
                         for (int i = 0; i < num_entidades; i++)
                         {
                             entidad_mover(&entidades[i], BLOQUEO);
-                            // Hacer que las manticoras disparen en dirección del enemigo de manera aleatoria
                             if (entidades[i].tipo == MANTICORA)
                             {
+                                // Hacer que las mantícoras disparen en dirección del enemigo de manera aleatoria
                                 if (rand()%(FPS * 2) == 2)
                                 {
                                     // Creando un proyectil que vaya hacia el jugador
@@ -228,65 +228,68 @@ int main()
                                     girar_hacia_entidad(&proyectiles_enemigo[indice], jugador);
                                 }
                                 
+                                // Las mantícoras van a rebotar en los bordes de la pantalla
                                 if (entidades[i].y_pos >= ALTO-entidades[i].alto || entidades[i].y_pos <= 0)
-                                {
                                     entidades[i].y_vel *= -1;
-                                }
                                 
                                 if (entidades[i].x_pos >= ANCHO-entidades[i].ancho || entidades[i].x_pos <= 0)
-                                {
                                     entidades[i].x_vel *= -1;
-                                }
 
                             }
-                            // Las gárgolas dispararán aleatoriamente también
                             else if (entidades[i].tipo == GARGOLA)
                             {
+                                // Las gárgolas dispararán aleatoriamente también
                                 if (rand()%(FPS*3) == 2)
                                     entidad_crear(proyectiles_enemigo, &num_proyectiles_enemigos, PROYECTIL_GARGOLA, &entidades[i], NULL);
+
+                                // Las gárgolas se moverán hacia el jugador
                                 girar_hacia_entidad(&entidades[i], jugador);
                             }
                             else if (entidades[i].tipo == HYDRA)
                             {
 
-                                // Disparando en momento aleatorios
+                                // La hydra va a ir disparando en momento aleatorios
                                 if (rand()%(int)(FPS*2.5) == 2)     
                                 {
                                     // Creando tres proyectiles que se muevan en una manera similar a la de una escopeta
                                     entidad_crear(proyectiles_enemigo, &num_proyectiles_enemigos, PROYECTIL_HYDRA, &entidades[i], NULL);
-                                    cambiar_angulo_movimiento(&proyectiles_enemigo[num_proyectiles_enemigos-1], PI/6.0);
+                                    cambiar_angulo_movimiento(&proyectiles_enemigo[num_proyectiles_enemigos-1], (5 * PI)/6.0);
 
                                     entidad_crear(proyectiles_enemigo, &num_proyectiles_enemigos, PROYECTIL_HYDRA, &entidades[i], NULL);
-                                    cambiar_angulo_movimiento(&proyectiles_enemigo[num_proyectiles_enemigos-1], 0);
+                                    cambiar_angulo_movimiento(&proyectiles_enemigo[num_proyectiles_enemigos-1], PI);
 
                                     entidad_crear(proyectiles_enemigo, &num_proyectiles_enemigos, PROYECTIL_HYDRA, &entidades[i], NULL);
-                                    cambiar_angulo_movimiento(&proyectiles_enemigo[num_proyectiles_enemigos-1], PI/-6.0);
+                                    cambiar_angulo_movimiento(&proyectiles_enemigo[num_proyectiles_enemigos-1], (7 * PI)/6.0);
                                 }        
 
                                 // La Hydra se moverá de arriba hacia abajo en la pantalla                
                                 if (entidades[i].y_pos == 0 && entidades[i].y_vel <= 0)
-                                {
                                     cambiar_angulo_movimiento(&entidades[i], PI/2);
-                                }
                                 else if (entidades[i].y_pos == ALTO-entidades[i].alto && entidades[i].y_vel >= 0)
-                                {
                                     cambiar_angulo_movimiento(&entidades[i], (3*PI)/2);
-                                }
                             }
                             else if (entidades[i].tipo == FENIX)
                             {
+
                                 if  (rand()%(FPS*2) == 2)
                                 {
-                                    //Creando el disparo del fenix
+                                    // Creando el disparo del fénix, el cual va a dirigirse al jugador
                                     entidad_crear(proyectiles_enemigo, &num_proyectiles_enemigos, PROYECTIL_FENIX, &entidades[i], NULL);
                                     girar_hacia_entidad(&proyectiles_enemigo[num_proyectiles_enemigos-1], jugador);
                                 }
-                                
-                                girar_hacia_entidad(&entidades[i], jugador);
-                                if (distancia_hasta(entidades[i], jugador) > 300)
+
+                                if (distancia_entre_entidades(entidades[i], jugador) > (ALTO/2)+(entidades[i].max_vel))
+                                    girar_hacia_entidad(&entidades[i], jugador);
+                                else if (distancia_entre_entidades(entidades[i], jugador) < (ALTO/2)-(entidades[i].max_vel))
                                 {
+                                    girar_hacia_entidad(&entidades[i], jugador);
                                     entidades[i].x_vel *= -1;
                                     entidades[i].y_vel *= -1;
+                                }
+                                else
+                                {
+                                    entidades[i].x_vel *= 0;
+                                    entidades[i].y_vel *= 0 ;                              
                                 }
                             }
 
@@ -298,9 +301,10 @@ int main()
                                 {
                                     pausa = 1;
                                     al_stop_timer(puntaje);
-                                    puntaje_mas_alto_guardar(jugador_puntos, "Pedro");
+                                    if (puntaje_mas_alto_obtener() < jugador_puntos)
+                                        puntaje_mas_alto_guardar(jugador_puntos);
                                 }
-                                entidad_destruir_si_esta_muerta(&entidades[i], entidades, i, &num_entidades, &jugador_puntos);
+                                entidad_destruir_si_esta_muerta(&entidades[i], entidades, i, &num_entidades, &jugador_puntos, &jugador);
                             }
 
                         }
@@ -317,18 +321,18 @@ int main()
                             {
                                 if (checar_colisiones(&proyectiles_jugador[i], &entidades[j], NULL))
                                 {
-                                    entidad_destruir_si_esta_muerta(&proyectiles_jugador[i], proyectiles_jugador, i, &num_proyectiles_jugador, NULL);
+                                    entidad_destruir_si_esta_muerta(&proyectiles_jugador[i], proyectiles_jugador, i, &num_proyectiles_jugador, NULL, NULL);
                                     if(entidades[j].tipo==FENIX&&jugador.vidas<=4)
                                         jugador.vidas+=1;
-                                    entidad_destruir_si_esta_muerta(&entidades[j], entidades, j, &num_entidades, &jugador_puntos);
+                                    entidad_destruir_si_esta_muerta(&entidades[j], entidades, j, &num_entidades, &jugador_puntos, &jugador);
                                 }
                             }
                             for (int j = 0; j < num_proyectiles_enemigos; j++)
                             {
                                 if (checar_colisiones(&proyectiles_jugador[i], &proyectiles_enemigo[j], NULL))
                                 {
-                                    entidad_destruir_si_esta_muerta(&proyectiles_jugador[i], proyectiles_jugador, i, &num_proyectiles_jugador, NULL);
-                                    entidad_destruir_si_esta_muerta(&proyectiles_enemigo[j], proyectiles_enemigo, j, &num_proyectiles_enemigos, NULL);
+                                    entidad_destruir_si_esta_muerta(&proyectiles_jugador[i], proyectiles_jugador, i, &num_proyectiles_jugador, NULL, NULL);
+                                    entidad_destruir_si_esta_muerta(&proyectiles_enemigo[j], proyectiles_enemigo, j, &num_proyectiles_enemigos, NULL, NULL);
                                 }
                             }
                         }
@@ -348,9 +352,10 @@ int main()
                                 {
                                     pausa = 1;
                                     al_stop_timer(puntaje); 
-                                    puntaje_mas_alto_guardar(jugador_puntos, "Pedro");                                   
+                                    if (puntaje_mas_alto_obtener() < jugador_puntos)
+                                        puntaje_mas_alto_guardar(jugador_puntos);                                 
                                 }
-                                entidad_destruir_si_esta_muerta(&proyectiles_enemigo[i], proyectiles_enemigo, i, &num_proyectiles_enemigos, NULL);
+                                entidad_destruir_si_esta_muerta(&proyectiles_enemigo[i], proyectiles_enemigo, i, &num_proyectiles_enemigos, NULL, NULL);
                             }
                         }
 
@@ -504,7 +509,7 @@ int main()
                         mode = 0;   
                         jugador_puntos = 0;
                         highscore = puntaje_mas_alto_obtener();
-                        sprintf(puntaje_mas_alto, "HIGHSCORE: %05i, LOL: %s", highscore.puntaje, highscore.nombre);
+                        sprintf(puntaje_mas_alto, "HIGHSCORE: %05i", highscore);
                         modo_inicializar(entidades_no_vivas, mode, &num_entidades, NULL);      
                     }
                 }

@@ -49,7 +49,7 @@ struct Entidad
     ALLEGRO_BITMAP *sprite;
     float x_pos;
     float y_pos;
-    int max_vel;
+    float max_vel;
     float x_vel;
     float y_vel;
     int vidas;
@@ -64,7 +64,7 @@ struct Usuario
 };
 
 
-enum imagenes {JUGADOR_IMAGEN_0, JUGADOR_IMAGEN_1, ICONO_IMAGEN, WALL_IMAGEN, MONT1_IMAGEN, MONT2_IMAGEN, LUNA_IMAGEN, DRAGO_LUNA_IMAGEN, FUEGO_0_IMAGEN, FUEGO_1_IMAGEN, FUEGO_2_IMAGEN, FONDO_0_IMAGEN, FONDO_1_IMAGEN, FONDO_2_IMAGEN, FONDO_3_IMAGEN, TORRE_0_IMAGEN, TORRE_1_IMAGEN, MANTICORA_IMAGEN_0, MANTICORA_IMAGEN_1, FENIX_IMAGEN_0, FENIX_IMAGEN_1, HYDRA_IMAGEN_0, HYDRA_IMAGEN_1, GARGOLA_IMAGEN_0, GARGOLA_IMAGEN_1, PROYECTIL_0_IMAGEN, PROYECTIL_1_IMAGEN, PROYECTIL_2_IMAGEN, PROYECTIL_3_IMAGEN};
+enum imagenes {JUGADOR_IMAGEN_0, JUGADOR_IMAGEN_1, ICONO_IMAGEN, WALL_IMAGEN, MONT1_IMAGEN, MONT2_IMAGEN, LUNA_IMAGEN, DRAGO_LUNA_IMAGEN, FUEGO_0_IMAGEN, FUEGO_1_IMAGEN, FUEGO_2_IMAGEN, FONDO_0_IMAGEN, FONDO_1_IMAGEN, FONDO_2_IMAGEN, FONDO_3_IMAGEN, TORRE_0_IMAGEN, TORRE_1_IMAGEN, MANTICORA_IMAGEN_0, MANTICORA_IMAGEN_1, FENIX_IMAGEN_0, FENIX_IMAGEN_1, HYDRA_IMAGEN_0, HYDRA_IMAGEN_1, GARGOLA_IMAGEN_0, GARGOLA_IMAGEN_1, PROYECTIL_0_IMAGEN, PROYECTIL_1_IMAGEN, PROYECTIL_2_IMAGEN, PROYECTIL_3_IMAGEN, PROYECTIL_4_IMAGEN};
 
 enum fuentes {FUENTE_60, FUENTE_40, FUENTE_20, FUENTE_15,FUENTE_TITULO_20, FUENTE_TITULO_80, FUENTE_TITULO_50,};
 
@@ -106,6 +106,7 @@ void imagenes_cargar(int *fin)
     imagenes[PROYECTIL_1_IMAGEN] = al_load_bitmap("Imagenes/disparo_fenix.png");
     imagenes[PROYECTIL_2_IMAGEN] = al_load_bitmap("Imagenes/disparo_hydra.png");
     imagenes[PROYECTIL_3_IMAGEN] = al_load_bitmap("Imagenes/disparo_gargola.png");
+    imagenes[PROYECTIL_4_IMAGEN] = al_load_bitmap("Imagenes/disparo_quimera.png");
 
     for (int i = 0; i < PROYECTIL_3_IMAGEN; i++)
     {
@@ -196,8 +197,8 @@ void entidad_inicializar(struct Entidad *entidad, int tipo, struct Entidad *enti
             entidad->y_vel = entidad->max_vel/2;
             break;
         case PROYECTIL_MANTICORA:
-            entidad->sprite = imagenes[PROYECTIL_1_IMAGEN];
-            entidad->max_vel = ((VEL/FPS) * -1);
+            entidad->sprite = imagenes[PROYECTIL_4_IMAGEN];
+            entidad->max_vel = ((VEL/FPS));
             entidad->x_vel = entidad->max_vel;
             entidad->vidas = 1;
             entidad->alto = al_get_bitmap_height(entidad->sprite)*0.125;
@@ -216,7 +217,7 @@ void entidad_inicializar(struct Entidad *entidad, int tipo, struct Entidad *enti
             break;
         case PROYECTIL_FENIX:
             entidad->sprite = imagenes[PROYECTIL_1_IMAGEN];
-            entidad->max_vel = ((VEL/FPS) * -2) / 2;
+            entidad->max_vel = (VEL/FPS);
             entidad->x_vel = entidad->max_vel;
             entidad->vidas = 1;
             entidad->alto = al_get_bitmap_height(entidad->sprite)*0.125;
@@ -228,14 +229,14 @@ void entidad_inicializar(struct Entidad *entidad, int tipo, struct Entidad *enti
             entidad->sprite = imagenes[GARGOLA_IMAGEN_0];
             entidad->x_pos = ANCHO-100;
             entidad->y_pos = rand()%ALTO;
-            entidad->max_vel = (VEL/FPS)/-3;
+            entidad->max_vel = (VEL/FPS)/3;
             entidad->vidas = 1;
             entidad->alto = al_get_bitmap_height(entidad->sprite)*1;
             entidad->ancho = al_get_bitmap_width(entidad->sprite)*1;
             break;
         case PROYECTIL_GARGOLA:
             entidad->sprite = imagenes[PROYECTIL_3_IMAGEN];
-            entidad->max_vel = ((VEL/FPS) * -2) / 2;
+            entidad->max_vel = (VEL/FPS) * -1;
             entidad->x_vel = entidad->max_vel;
             entidad->vidas = 1;
             entidad->alto = al_get_bitmap_height(entidad->sprite)*0.125;
@@ -254,7 +255,7 @@ void entidad_inicializar(struct Entidad *entidad, int tipo, struct Entidad *enti
             break;
         case PROYECTIL_HYDRA:
             entidad->sprite = imagenes[PROYECTIL_2_IMAGEN];
-            entidad->max_vel = ((VEL/FPS) * -2) / 2;
+            entidad->max_vel = ((VEL/FPS) * 2) / 2;
             entidad->x_vel = entidad->max_vel;
             entidad->vidas = 1;
             entidad->alto = al_get_bitmap_height(entidad->sprite)*0.125;
@@ -458,31 +459,27 @@ void entidad_animar(struct Entidad *entidad)
     }
 }
 
-struct Usuario puntaje_mas_alto_obtener()
+int puntaje_mas_alto_obtener()
 {
-    struct Usuario usuario;
-    usuario.puntaje = -1;
-    strcpy(usuario.nombre, "error");
+    int puntaje = 0;
 
 
     FILE *puntaje_archivo = fopen("puntaje.uwu", "rb");
     if (puntaje_archivo == NULL)
     {
         printf("Error al cargar el archivo");
-        return usuario;
     }
-    fread(&usuario, sizeof(struct Usuario), 1, puntaje_archivo);
-    printf("%i\n", usuario.puntaje);
+    else
+    {
+        fread(&puntaje, sizeof(int), 1, puntaje_archivo);
+    }
     fclose(puntaje_archivo);
 
-    return usuario; 
+    return puntaje; 
 }
 
-void puntaje_mas_alto_guardar(int puntaje, char *nombre)
+void puntaje_mas_alto_guardar(int puntaje)
 {
-    struct Usuario usuario;
-    usuario.puntaje = puntaje;
-    strcpy(usuario.nombre, nombre);
     
     FILE *puntaje_archivo = fopen("puntaje.uwu", "wb");
     if (puntaje_archivo == NULL)
@@ -491,6 +488,6 @@ void puntaje_mas_alto_guardar(int puntaje, char *nombre)
         return;
     }    
     rewind(puntaje_archivo);
-    fwrite(&usuario, sizeof(struct Usuario), 1, puntaje_archivo);
+    fwrite(&puntaje, sizeof(int), 1, puntaje_archivo);
     fclose(puntaje_archivo);
 }
