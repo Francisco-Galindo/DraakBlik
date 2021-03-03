@@ -318,6 +318,8 @@ int main()
                                 if (checar_colisiones(&proyectiles_jugador[i], &entidades[j], NULL))
                                 {
                                     entidad_destruir_si_esta_muerta(&proyectiles_jugador[i], proyectiles_jugador, i, &num_proyectiles_jugador, NULL);
+                                    if(entidades[j].tipo==FENIX&&jugador.vidas<=4)
+                                        jugador.vidas+=1;
                                     entidad_destruir_si_esta_muerta(&entidades[j], entidades, j, &num_entidades, &jugador_puntos);
                                 }
                             }
