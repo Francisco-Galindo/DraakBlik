@@ -159,10 +159,14 @@ int main()
                 {
                     if (jugador.vidas > 0)
                     {
-                        al_draw_text(fuentes[FUENTE_60], al_map_rgb(245, 206, 66), ANCHO/2, 75, ALLEGRO_ALIGN_CENTRE, "PAUSA");
-                        al_draw_text(fuentes[FUENTE_15], al_map_rgb(245, 206, 66), ANCHO/2, ALTO/1.5, ALLEGRO_ALIGN_CENTRE, "PRESIONA ENTER PARA IR AL MENU");
+                        //Siempre que estemos en Pausa se nos desplegara textos que explican los controles
+                        al_draw_text(fuentes[FUENTE_60], al_map_rgb(245, 206, 66), ANCHO/2, 40, ALLEGRO_ALIGN_CENTRE, "PAUSA");
+                        al_draw_text(fuentes[FUENTE_15], al_map_rgb(245, 206, 66), ANCHO/2, 390, ALLEGRO_ALIGN_CENTRE, "PRESIONA ENTER PARA IR AL MENU");
                         al_draw_scaled_bitmap(imagenes[CONTROL_0_IMAGEN], 0, 0, al_get_bitmap_width(imagenes[CONTROL_0_IMAGEN]), al_get_bitmap_height(imagenes[CONTROL_0_IMAGEN]), 110, 150 ,200, 150, 0);
                         al_draw_scaled_bitmap(imagenes[CONTROL_1_IMAGEN], 0, 0, al_get_bitmap_width(imagenes[CONTROL_1_IMAGEN]), al_get_bitmap_height(imagenes[CONTROL_0_IMAGEN]), 330, 150 ,200, 150, 0);
+                        al_draw_text(fuentes[FUENTE_15], al_map_rgb(255, 255,255), ANCHO/2, 120, ALLEGRO_ALIGN_CENTRE, "Movimiento:");
+                        al_draw_text(fuentes[FUENTE_15], al_map_rgb(255, 255,255), ANCHO/2, 320, ALLEGRO_ALIGN_CENTRE, "Disparo:");
+                        al_draw_text(fuentes[FUENTE_15], al_map_rgb(255, 255,255), ANCHO/2, 355, ALLEGRO_ALIGN_CENTRE, "ESPACIO");
                     }
                     else
                     {
