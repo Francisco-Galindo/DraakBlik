@@ -86,7 +86,7 @@ int main()
     color_fondo = al_map_rgb(1, 1, 31);
     al_clear_to_color(color_fondo);
 
-    // Creando los eventos que van a ser usados en el juego
+    // Creando los eventos que van a ser usados en el juego.
     eventos = al_create_event_queue();
     framerate = al_create_timer(1.0/FPS);
     anim = al_create_timer(0.075);
@@ -98,14 +98,14 @@ int main()
     al_register_event_source(eventos, al_get_timer_event_source(puntaje));
 
 
-    entidad_inicializar(&jugador, JUGADOR, NULL, NULL);
-
+    // Obteniendo el puntaje más alto para dibujarlo más adelante.
     int highscore = puntaje_mas_alto_obtener();
     sprintf(puntaje_mas_alto, "HIGHSCORE: %05i", highscore);
 
-
+    // Inicializando el modo, que en este caso será el MENU.
     modo_inicializar(inertes, &num_inertes, modo, NULL);
  
+    // Inicializando algunos de los timers.
     al_start_timer(framerate);
     al_start_timer(anim);
     al_flip_display();
@@ -114,10 +114,12 @@ int main()
 
     while (!fin)
     {
-        // Dibujando pantalla
+        // Dibujando pantalla correspondiente a cada modo.
         if (redibujar == 1 && al_event_queue_is_empty(eventos))
         {
             al_clear_to_color(color_fondo);
+
+
             if (modo == MENU)
             {
                 dibujar_menu(inertes, &opcion, puntaje_mas_alto);
@@ -138,20 +140,21 @@ int main()
                     entidad_dibujar(proyectiles_jugador[i]);
 
                 for (int i = 0; i < num_proyectiles_enemigos; i++)
-                {
                     entidad_dibujar(proyectiles_enemigo[i]);
-                }
                 
 
+                // Hacer que el jugador parpadee si ha sido dañado.
                 if ((danado == 0 || pausa == 1) || al_get_timer_count(anim) % 3 == 0)
                     entidad_dibujar(jugador);
 
 
+                // Dibujar las vidas restantes y el puntaje actual
                 sprintf(cadena_vidas, "Vidas: %02i", jugador.vidas);
                 al_draw_text(fuentes[FUENTE_15], al_map_rgb(255, 255, 255), ANCHO-15, ALTO-30, ALLEGRO_ALIGN_RIGHT, cadena_vidas);
                 sprintf(cadena_puntaje, "Puntaje: %05i", jugador_puntos);
                 al_draw_text(fuentes[FUENTE_15], al_map_rgb(255, 255, 255), 15, ALTO-30, ALLEGRO_ALIGN_LEFT, cadena_puntaje);
 
+                // Dibujar lo correspondiente a la pausa
                 if (pausa == 1)
                 {
                     if (jugador.vidas > 0)
@@ -178,7 +181,6 @@ int main()
 
         }
 
-        // Checamos si hay un evento
         al_wait_for_event(eventos, &evento);
 
         switch(evento.type)
