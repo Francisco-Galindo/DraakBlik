@@ -1,12 +1,16 @@
-
 #include "juego.c"
 
 
+#define ENEMIGOS_MAX 5
+#define PROTECTILES_JUGADOR_MAX 64
+#define PROTECTILES_ENEMIGO_MAX 64
+#define INERTES_MAX 32
+
 struct Entidad jugador;
-struct Entidad entidades[128];
-struct Entidad proyectiles_jugador[128];
-struct Entidad proyectiles_enemigo[128];
-struct Entidad entidades_no_vivas[64];
+struct Entidad enemigos[ENEMIGOS_MAX];
+struct Entidad proyectiles_jugador[PROTECTILES_JUGADOR_MAX];
+struct Entidad proyectiles_enemigo[PROTECTILES_ENEMIGO_MAX];
+struct Entidad inertes[INERTES_MAX];
 
 int main()
 {
@@ -20,7 +24,7 @@ int main()
     ALLEGRO_TIMER *puntaje = NULL;
 
 
-    int fin = 0, redibujar = 1, pausa = 1, mode = 0, jugador_puntos = 0, num_entidades = 0, num_inertes = 0, num_proyectiles_jugador = 0, num_proyectiles_enemigos = 0, ops = 0, danado = 0;
+    int fin = 0, redibujar = 1, pausa = 1, modo = MENU, jugador_puntos = 0, num_enemigos = 0, num_inertes = 0, num_proyectiles_jugador = 0, num_proyectiles_enemigos = 0, opcion = 0, danado = 0;
 
     char cadena_vidas[15];
     char cadena_puntaje[15];
@@ -74,7 +78,6 @@ int main()
     }
     sonidos_cargar(&fin);
 
-
     // Creando la ventana
     disp = al_create_display(ANCHO,ALTO);
     al_set_window_title(disp, "Draak Blik");
@@ -100,13 +103,14 @@ int main()
     int highscore = puntaje_mas_alto_obtener();
     sprintf(puntaje_mas_alto, "HIGHSCORE: %05i", highscore);
 
-    modo_inicializar(entidades_no_vivas, mode, &num_inertes, NULL);
+
+    modo_inicializar(inertes, &num_inertes, modo, NULL);
+ 
     al_start_timer(framerate);
     al_start_timer(anim);
     al_flip_display();
 
-
-    
+   
 
     while (!fin)
     {
@@ -114,21 +118,21 @@ int main()
         if (redibujar == 1 && al_event_queue_is_empty(eventos))
         {
             al_clear_to_color(color_fondo);
-            if (mode == 0)
+            if (modo == MENU)
             {
-                dibujar_menu(entidades_no_vivas, &ops, puntaje_mas_alto);
+                dibujar_menu(inertes, &opcion, puntaje_mas_alto);
             }
-            else if (mode == 1)
+            else if (modo == JUEGO)
             {
                 al_draw_scaled_bitmap(imagenes[WALL_IMAGEN], 0, 0, al_get_bitmap_width(imagenes[WALL_IMAGEN]), al_get_bitmap_height(imagenes[WALL_IMAGEN]), 0, 0 ,ANCHO, ALTO, 0);
 
                 al_draw_scaled_bitmap(imagenes[LUNA_IMAGEN], 0, 0, al_get_bitmap_width(imagenes[LUNA_IMAGEN]), al_get_bitmap_height(imagenes[LUNA_IMAGEN]), 520, 50, 90, 90, 0);
 
                 for (int i = 0; i < num_inertes; i++)
-                    entidad_dibujar(entidades_no_vivas[i]); 
+                    entidad_dibujar(inertes[i]); 
 
-                for (int i = 0; i < num_entidades; i++)
-                    entidad_dibujar(entidades[i]);
+                for (int i = 0; i < num_enemigos; i++)
+                    entidad_dibujar(enemigos[i]);
 
                 for (int i = 0; i < num_proyectiles_jugador; i++)                
                     entidad_dibujar(proyectiles_jugador[i]);
@@ -164,7 +168,7 @@ int main()
                     }
                 }
             }
-            else if (mode == 2)
+            else if (modo == CREDITOS)
             {
                 dibujar_creditos();
             }
@@ -186,115 +190,116 @@ int main()
                 // estado del juego, para luego cambiar el valor de la variable de dibujar a 1.
                 if(evento.timer.source == framerate)
                 {
-                    if (pausa == 0 && mode == 1)
+                    if (modo == JUEGO && pausa == 0)
                     {
                         if(danado == 1 && al_get_timer_count(framerate) == FPS/0.75)
                         {
                             danado = 0;
                         }
-                        // Spawneo de las entidades
-                        if (num_entidades < 5 && rand()%FPS == 3)
+                        // Aparición de nuevas entidades
+                        if (num_enemigos < 5 && rand()%FPS == 3)
                         {
                             int tipo;
                             int numero_aleatorio = rand()%16;
+
                             // Eligiendo el tipo de entidad que se va a crear, dependiendo del numero aleatorio generado.
                             if (numero_aleatorio >= 0 && numero_aleatorio <= 7)
                                 tipo = GARGOLA;
                             else if (numero_aleatorio >= 9 && numero_aleatorio <= 12)
                                 tipo = MANTICORA;
                             else if (numero_aleatorio >= 13 && numero_aleatorio <= 14)
-                                tipo = HYDRA;
+                                tipo = HIDRA;
                             else 
                                 tipo = FENIX;
 
-                            entidad_crear(entidades, &num_entidades, tipo, NULL, NULL); 
+                            entidad_crear(enemigos, &num_enemigos, tipo, NULL, NULL); 
                         }
 
-                        // Movimiento del jugador
+                        // Movimiento del jugador.
                         entidad_mover(&jugador, BLOQUEO);
             
-                        // Actualización en el estado de los enemigos
-                        for (int i = 0; i < num_entidades; i++)
+                        // Actualización en el estado de los enemigos.
+                        for (int i = 0; i < num_enemigos; i++)
                         {
-                            entidad_mover(&entidades[i], BLOQUEO);
-                            if (entidades[i].tipo == MANTICORA)
+                            entidad_mover(&enemigos[i], BLOQUEO);
+                            if (enemigos[i].tipo == MANTICORA)
                             {
-                                // Hacer que las mantícoras disparen en dirección del enemigo de manera aleatoria
+                                // Hacer que las mantícoras disparen en dirección del enemigo de manera aleatoria.
                                 if (rand()%(FPS * 2) == 2)
                                 {
-                                    // Creando un proyectil que vaya hacia el jugador
-                                    entidad_crear(proyectiles_enemigo, &num_proyectiles_enemigos, PROYECTIL_MANTICORA, &entidades[i], NULL);
+                                    // Creando un proyectil que vaya hacia el jugador.
+                                    entidad_crear(proyectiles_enemigo, &num_proyectiles_enemigos, MANTICORA_PROYECTIL, &enemigos[i], NULL);
                                     int indice = num_proyectiles_enemigos-1;
                                     girar_hacia_entidad(&proyectiles_enemigo[indice], jugador);
                                 }
                                 
-                                // Las mantícoras van a rebotar en los bordes de la pantalla
-                                if (entidades[i].y_pos >= ALTO-entidades[i].alto || entidades[i].y_pos <= 0)
-                                    entidades[i].y_vel *= -1;
+                                // Las mantícoras van a rebotar en los bordes de la pantalla.
+                                if (enemigos[i].y_pos >= ALTO-enemigos[i].alto || enemigos[i].y_pos <= 0)
+                                    enemigos[i].y_vel *= -1;
                                 
-                                if (entidades[i].x_pos >= ANCHO-entidades[i].ancho || entidades[i].x_pos <= 0)
-                                    entidades[i].x_vel *= -1;
+                                if (enemigos[i].x_pos >= ANCHO-enemigos[i].ancho || enemigos[i].x_pos <= 0)
+                                    enemigos[i].x_vel *= -1;
 
                             }
-                            else if (entidades[i].tipo == GARGOLA)
+                            else if (enemigos[i].tipo == GARGOLA)
                             {
-                                // Las gárgolas dispararán aleatoriamente también
+                                // Las gárgolas dispararán aleatoriamente también.
                                 if (rand()%(FPS*3) == 2)
-                                    entidad_crear(proyectiles_enemigo, &num_proyectiles_enemigos, PROYECTIL_GARGOLA, &entidades[i], NULL);
+                                    entidad_crear(proyectiles_enemigo, &num_proyectiles_enemigos, GARGOLA_PROYECTIL, &enemigos[i], NULL);
 
-                                // Las gárgolas se moverán hacia el jugador
-                                girar_hacia_entidad(&entidades[i], jugador);
+                                // Las gárgolas se moverán hacia el jugador.
+                                girar_hacia_entidad(&enemigos[i], jugador);
                             }
-                            else if (entidades[i].tipo == HYDRA)
+                            else if (enemigos[i].tipo == HIDRA)
                             {
 
-                                // La hydra va a ir disparando en momento aleatorios
+                                // La hidra va a ir disparando en momento aleatorios.
                                 if (rand()%(int)(FPS*2.5) == 2)     
                                 {
-                                    // Creando tres proyectiles que se muevan en una manera similar a la de una escopeta
-                                    entidad_crear(proyectiles_enemigo, &num_proyectiles_enemigos, PROYECTIL_HYDRA, &entidades[i], NULL);
+                                    // Creando tres proyectiles que se muevan en una manera similar a la de una escopeta.
+                                    entidad_crear(proyectiles_enemigo, &num_proyectiles_enemigos, HIDRA_PROYECTIL, &enemigos[i], NULL);
                                     cambiar_angulo_movimiento(&proyectiles_enemigo[num_proyectiles_enemigos-1], (5 * PI)/6.0);
 
-                                    entidad_crear(proyectiles_enemigo, &num_proyectiles_enemigos, PROYECTIL_HYDRA, &entidades[i], NULL);
+                                    entidad_crear(proyectiles_enemigo, &num_proyectiles_enemigos, HIDRA_PROYECTIL, &enemigos[i], NULL);
                                     cambiar_angulo_movimiento(&proyectiles_enemigo[num_proyectiles_enemigos-1], PI);
 
-                                    entidad_crear(proyectiles_enemigo, &num_proyectiles_enemigos, PROYECTIL_HYDRA, &entidades[i], NULL);
+                                    entidad_crear(proyectiles_enemigo, &num_proyectiles_enemigos, HIDRA_PROYECTIL, &enemigos[i], NULL);
                                     cambiar_angulo_movimiento(&proyectiles_enemigo[num_proyectiles_enemigos-1], (7 * PI)/6.0);
                                 }        
 
-                                // La Hydra se moverá de arriba hacia abajo en la pantalla                
-                                if (entidades[i].y_pos == 0 && entidades[i].y_vel <= 0)
-                                    cambiar_angulo_movimiento(&entidades[i], PI/2);
-                                else if (entidades[i].y_pos == ALTO-entidades[i].alto && entidades[i].y_vel >= 0)
-                                    cambiar_angulo_movimiento(&entidades[i], (3*PI)/2);
+                                // La Hydra se moverá de arriba hacia abajo en la pantalla  .              
+                                if (enemigos[i].y_pos == 0 && enemigos[i].y_vel <= 0)
+                                    cambiar_angulo_movimiento(&enemigos[i], PI/2);
+                                else if (enemigos[i].y_pos == ALTO-enemigos[i].alto && enemigos[i].y_vel >= 0)
+                                    cambiar_angulo_movimiento(&enemigos[i], (3*PI)/2);
                             }
-                            else if (entidades[i].tipo == FENIX)
+                            else if (enemigos[i].tipo == FENIX)
                             {
 
                                 if  (rand()%(FPS*2) == 2)
                                 {
-                                    // Creando el disparo del fénix, el cual va a dirigirse al jugador
-                                    entidad_crear(proyectiles_enemigo, &num_proyectiles_enemigos, PROYECTIL_FENIX, &entidades[i], NULL);
+                                    // Creando el disparo del fénix, el cual va a dirigirse al jugador.
+                                    entidad_crear(proyectiles_enemigo, &num_proyectiles_enemigos, FENIX_PROYECTIL, &enemigos[i], NULL);
                                     girar_hacia_entidad(&proyectiles_enemigo[num_proyectiles_enemigos-1], jugador);
                                 }
 
-                                if (distancia_entre_entidades(entidades[i], jugador) > (ALTO/2)+(entidades[i].max_vel))
-                                    girar_hacia_entidad(&entidades[i], jugador);
-                                else if (distancia_entre_entidades(entidades[i], jugador) < (ALTO/2)-(entidades[i].max_vel))
+                                if (distancia_entre_entidades(enemigos[i], jugador) > (ALTO/2)+(enemigos[i].max_vel))
+                                    girar_hacia_entidad(&enemigos[i], jugador);
+                                else if (distancia_entre_entidades(enemigos[i], jugador) < (ALTO/2)-(enemigos[i].max_vel))
                                 {
-                                    girar_hacia_entidad(&entidades[i], jugador);
-                                    entidades[i].x_vel *= -1;
-                                    entidades[i].y_vel *= -1;
+                                    girar_hacia_entidad(&enemigos[i], jugador);
+                                    enemigos[i].x_vel *= -1;
+                                    enemigos[i].y_vel *= -1;
                                 }
                                 else
                                 {
-                                    entidades[i].x_vel *= 0;
-                                    entidades[i].y_vel *= 0 ;                              
+                                    enemigos[i].x_vel *= 0;
+                                    enemigos[i].y_vel *= 0 ;                              
                                 }
                             }
 
-                            // Colisiones de los enemigos con el jugador
-                            if (danado == 0 && checar_colisiones(&jugador, &entidades[i], &danado))
+                            // Colisiones de los enemigos con el jugador.
+                            if (danado == 0 && checar_colisiones(&jugador, &enemigos[i], &danado))
                             {
                                 al_set_timer_count(framerate, 0);
                                 if (jugador.vidas <= 0)
@@ -304,57 +309,58 @@ int main()
                                     if (puntaje_mas_alto_obtener() < jugador_puntos)
                                         puntaje_mas_alto_guardar(jugador_puntos);
                                 }
-                                //Dibuja una explosión en las coordenas de donde estaba el enemigo
-                                entidad_crear(entidades_no_vivas,&num_inertes, GENERICO, NULL,imagenes[EXPLOSION_IMAGEN]);
-                                entidades_no_vivas[num_inertes-1].x_pos = entidades[i].x_pos;
-                                entidades_no_vivas[num_inertes-1].y_pos = entidades[i].y_pos;
+                                //Dibuja una explosión en las coordenas de donde estaba el enemigo.
+                                entidad_crear(inertes,&num_inertes, GENERICO, NULL,imagenes[EXPLOSION_IMAGEN]);
+                                inertes[num_inertes-1].x_pos = enemigos[i].x_pos;
+                                inertes[num_inertes-1].y_pos = enemigos[i].y_pos;
                                 
-                                entidad_destruir_si_esta_muerta(&entidades[i], entidades, i, &num_entidades, &jugador_puntos, &jugador);
+                                entidad_destruir_si_esta_muerta(enemigos, i, &num_enemigos, &jugador_puntos, &jugador);
                             }
 
                         }
 
 
 
-                        // Actualización de estado de cada proyectil del jugador
+                        // Actualización de estado de cada proyectil del jugador.
                         for (int i = 0; i < num_proyectiles_jugador; i++)
                         {
+                            // Eliminando el proyectil si no
                             if (!entidad_mover(&proyectiles_jugador[i], ELIMINAR))
-                                entidad_eliminar(proyectiles_jugador, i, &num_proyectiles_jugador);
+                                entidad_destruir(proyectiles_jugador, i, &num_proyectiles_jugador);
                             
-                            for (int j = 0; j < num_entidades; j++)
+                            for (int j = 0; j < num_enemigos; j++)
                             {
-                                if (checar_colisiones(&proyectiles_jugador[i], &entidades[j], NULL))
+                                if (checar_colisiones(&proyectiles_jugador[i], &enemigos[j], NULL))
                                 {
-                                    entidad_destruir_si_esta_muerta(&proyectiles_jugador[i], proyectiles_jugador, i, &num_proyectiles_jugador, NULL, NULL);
-                                    if(entidades[j].tipo==FENIX&&jugador.vidas<=4)
+                                    entidad_destruir_si_esta_muerta(proyectiles_jugador, i, &num_proyectiles_jugador, NULL, NULL);
+                                    if(enemigos[j].tipo==FENIX&&jugador.vidas<=4)
                                         jugador.vidas+=1;
                                 
-                                    //Dibuja una explosión en las coordenas de donde estaba el enemigo
-                                    entidad_crear(entidades_no_vivas,&num_inertes, GENERICO, NULL,imagenes[EXPLOSION_IMAGEN]);
-                                    entidades_no_vivas[num_inertes-1].x_pos = entidades[j].x_pos;
-                                    entidades_no_vivas[num_inertes-1].y_pos = entidades[j].y_pos;
+                                    //Dibuja una explosión en las coordenas de donde estaba el protectil enemigo.
+                                    entidad_crear(inertes,&num_inertes, GENERICO, NULL,imagenes[EXPLOSION_IMAGEN]);
+                                    inertes[num_inertes-1].x_pos = enemigos[j].x_pos;
+                                    inertes[num_inertes-1].y_pos = enemigos[j].y_pos;
                                     
-                                    entidad_destruir_si_esta_muerta(&entidades[j], entidades, j, &num_entidades, &jugador_puntos, &jugador);
+                                    entidad_destruir_si_esta_muerta(enemigos, j, &num_enemigos, &jugador_puntos, &jugador);
                                 }
                             }
                             for (int j = 0; j < num_proyectiles_enemigos; j++)
                             {
                                 if (checar_colisiones(&proyectiles_jugador[i], &proyectiles_enemigo[j], NULL))
                                 {
-                                    entidad_destruir_si_esta_muerta(&proyectiles_jugador[i], proyectiles_jugador, i, &num_proyectiles_jugador, NULL, NULL);
-                                    entidad_destruir_si_esta_muerta(&proyectiles_enemigo[j], proyectiles_enemigo, j, &num_proyectiles_enemigos, NULL, NULL);
+                                    entidad_destruir_si_esta_muerta(proyectiles_jugador, i, &num_proyectiles_jugador, NULL, NULL);
+                                    entidad_destruir_si_esta_muerta( proyectiles_enemigo, j, &num_proyectiles_enemigos, NULL, NULL);
                                 }
                             }
                         }
 
 
 
-                        // Actualización de estado de cada proyectil enemigo
+                        // Actualización de estado de cada proyectil enemigo.
                         for (int i = 0; i < num_proyectiles_enemigos; i++)
                         {
                             if (!entidad_mover(&proyectiles_enemigo[i], ELIMINAR))
-                                entidad_eliminar(proyectiles_enemigo, i, &num_proyectiles_enemigos);
+                                entidad_destruir(proyectiles_enemigo, i, &num_proyectiles_enemigos);
             
                             if (danado == 0 && checar_colisiones(&jugador, &proyectiles_enemigo[i], &danado))
                             {
@@ -366,50 +372,60 @@ int main()
                                     if (puntaje_mas_alto_obtener() < jugador_puntos)
                                         puntaje_mas_alto_guardar(jugador_puntos);                                 
                                 }
-                                entidad_destruir_si_esta_muerta(&proyectiles_enemigo[i], proyectiles_enemigo, i, &num_proyectiles_enemigos, NULL, NULL);
+                                entidad_destruir_si_esta_muerta(proyectiles_enemigo, i, &num_proyectiles_enemigos, NULL, NULL);
                             }
                         }
 
 
 
-                        // Actualizando estado de las entidades inertes
+                        // Actualizando estado de las entidades inertes.
                         for (int i = 0; i < num_inertes; i++)
-                            if (!entidad_mover(&entidades_no_vivas[i], ELIMINAR))
+                            if (!entidad_mover(&inertes[i], ELIMINAR))
                             {
-                                entidades_no_vivas[i].x_pos = ANCHO - 10;
+                                inertes[i].x_pos = ANCHO - 10;
                             }
 
                     }
-                    else if (pausa == 1 && mode == 1)
+                    else if (pausa == 1 && modo == JUEGO)
                     {
                         al_set_timer_count(framerate, al_get_timer_count(framerate) - 1);
                     }
                     redibujar = 1;
                 }
+
+                // Manejando el timer de animaciones.
                 else if (evento.timer.source == anim)
                 {
-                    if (mode == 0 && al_get_timer_count(anim) % 2 == 0)
+                    // Si la cuenta es par, y el modo es MENU, animar los fuegos, que corresponden a las dos primeras localidades del arreglo de entidades no vivas.
+                    if (modo == MENU && al_get_timer_count(anim) % 2 == 0)
                     {
-                        entidad_animar(&entidades_no_vivas[0]);
-                        entidad_animar(&entidades_no_vivas[1]);
+                        entidad_animar(&inertes[0]);
+                        entidad_animar(&inertes[1]);
 
                     }
-                    else if (mode == 1 && pausa == 0 && al_get_timer_count(anim) % 2 == 0)
+                    // Para el modo JUEGO
+                    else if (modo == JUEGO && pausa == 0 && al_get_timer_count(anim) % 2 == 0)
                     {
-                        entidad_animar(&jugador);
-                        for (int i = 0; i < num_entidades; i++)
-                            entidad_animar(&entidades[i]);
-                    }
-                    else if (mode == 1 && pausa == 0 && al_get_timer_count(anim) % 3 == 0)
-                    {
-                        for(int i=0; i< 64; i++)
+                        // Si la cuenta  es par y el modo es JUEGO, animar entidades correspondientes.
+                        if (al_get_timer_count(anim) % 2 == 0)
                         {
-                            if(entidades_no_vivas[i].sprite == imagenes[EXPLOSION_IMAGEN])
-                                entidad_eliminar(entidades_no_vivas,i,&num_inertes);
-
+                            entidad_animar(&jugador);
+                            for (int i = 0; i < num_enemigos; i++)
+                                entidad_animar(&enemigos[i]);                           
                         }
+                        if (al_get_timer_count(anim) % 3 == 0)
+                        {
+                            for(int i=0; i< 64; i++)
+                            {
+                                if(inertes[i].sprite == imagenes[EXPLOSION_IMAGEN])
+                                    entidad_destruir(inertes, i,&num_inertes);
+
+                            }
+                        }
+
                     }
                 }
+                // Hacer que el puntaje del jugador suba cada que se active este timer
                 else if (evento.timer.source == puntaje && pausa == 0)
                 {
                     jugador_puntos ++;
@@ -418,49 +434,55 @@ int main()
             
             
             case ALLEGRO_EVENT_KEY_DOWN:
+                // Cuando se presione una tecla
                 if(evento.keyboard.keycode == ALLEGRO_KEY_W || evento.keyboard.keycode == ALLEGRO_KEY_UP)
                 {
-                    if (mode == 1)
+                    // Cambiando velocidad del jugador en el modo JUEGO para ir hacia arriba.
+                    if (modo == JUEGO)
                     {
                         jugador.y_vel += jugador.max_vel * -1;
                     }
-                    else if (mode == 0 && ops>0)
+                    // Cambiar de opción en el menú.
+                    else if (modo == MENU && opcion>0)
                     {
-                        ops--;
+                        opcion--;
                         al_play_sample(sonidos[SELECCION_SONIDO], 1, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
                     }
                 }
                 else if (evento.keyboard.keycode == ALLEGRO_KEY_S || evento.keyboard.keycode == ALLEGRO_KEY_DOWN)
                 {
-                    if (mode == 1)
+                    // Misma situación que con el caso anterior, pero hacia abajo
+                    if (modo == JUEGO)
                     {
                         jugador.y_vel += jugador.max_vel;         
                     }
-                    else if (mode == 0 && ops<2)
+                    else if (modo == MENU && opcion<2)
                     {
-                        ops++;
+                        opcion++;
                         al_play_sample(sonidos[SELECCION_SONIDO], 1, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
                     }      
                 }
                 if (evento.keyboard.keycode == ALLEGRO_KEY_A || evento.keyboard.keycode == ALLEGRO_KEY_LEFT) 
                 {
-                    if (mode == 1)
+                    if (modo ==JUEGO)
                     {
+                        // Cambiar dirección del jugador a la izquierda
                         jugador.x_vel += jugador.max_vel * -1;
                     }
                 }
                 else if (evento.keyboard.keycode == ALLEGRO_KEY_D || evento.keyboard.keycode == ALLEGRO_KEY_RIGHT) 
                 {
-                    if (mode == 1)
+                    if (modo == JUEGO)
                     {
+                        // Cambiar dirección del jugador a la derecha
                         jugador.x_vel += jugador.max_vel;                        
                     }
                 }
                 else if(evento.keyboard.keycode == ALLEGRO_KEY_SPACE)
                 {
-                    if (mode == 1 && pausa == 0)
+                    if (modo == JUEGO && pausa == 0)
                     {
-                        entidad_crear(proyectiles_jugador, &num_proyectiles_jugador, PROYECTIL_JUGADOR, &jugador, NULL);
+                        entidad_crear(proyectiles_jugador, &num_proyectiles_jugador, JUGADOR_PROYECTIL, &jugador, NULL);
                         al_play_sample(sonidos[DISPARO_SONIDO], 1, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
 
                     }
@@ -470,7 +492,7 @@ int main()
                 break;
             
             case ALLEGRO_EVENT_KEY_UP:
-                
+                // Cuando se deje de presionar una tecla, se restará la velocidad que se sumó antes en la dirección correspondiente
                 if(evento.keyboard.keycode == ALLEGRO_KEY_W || evento.keyboard.keycode == ALLEGRO_KEY_UP)
                 {
                     jugador.y_vel -= jugador.max_vel * -1;
@@ -492,80 +514,79 @@ int main()
             case ALLEGRO_EVENT_KEY_CHAR:
                 if (evento.keyboard.keycode == ALLEGRO_KEY_ENTER || evento.keyboard.keycode == ALLEGRO_KEY_PAD_ENTER)
                 {
-                    if (mode == 0)
+                    // Cuando se presione ENTER en el menú, se inicializará el modo correspondiente
+                    if (modo == MENU)
                     {
                         al_stop_samples();
-                        if (ops == 0)
+                        if (opcion == 0)
                         {
                             num_inertes = 0;
-                            num_entidades = 0;
+                            num_enemigos = 0;
                             num_proyectiles_enemigos = 0;
                             num_proyectiles_jugador = 0;
                             danado = 0;
-                            mode = 1;
-                            modo_inicializar(entidades_no_vivas, mode, &num_inertes, &jugador);
+                            modo = 1;
+                            modo_inicializar(inertes, &num_inertes,  modo, &jugador);
                             al_start_timer(puntaje);
                         }
-                        else if (ops == 1)
+                        else if (opcion == 1)
                         {
                             
                             num_inertes = 0;
-                            num_entidades = 0;
+                            num_enemigos = 0;
                             num_proyectiles_enemigos = 0;
                             num_proyectiles_jugador = 0;
-                            mode = 2;
-                            modo_inicializar(entidades_no_vivas, mode, &num_entidades, NULL);
+                            modo = 2;
+                            modo_inicializar(inertes, &num_inertes, modo,  NULL);
                         }
-                        else if (ops == 2)
+                        else if (opcion == 2)
                             fin = 1;
                     }
-                    else if (mode == 1 && pausa == 1)
+                    // En el juego, se regresará el menú
+                    else if (modo == JUEGO && pausa == 1)
                     {
                         al_stop_samples();
                         num_inertes = 0;
-                        num_entidades = 0;
+                        num_enemigos = 0;
                         num_proyectiles_enemigos = 0;
                         num_proyectiles_jugador = 0;
-                        mode = 0;   
+                        modo = 0;   
                         jugador_puntos = 0;
                         highscore = puntaje_mas_alto_obtener();
                         sprintf(puntaje_mas_alto, "HIGHSCORE: %05i", highscore);
-                        modo_inicializar(entidades_no_vivas, mode, &num_entidades, NULL);      
+                        modo_inicializar(inertes, &num_inertes, modo,  NULL);      
                     }
-                }
-                else if (evento.keyboard.keycode == ALLEGRO_KEY_ESCAPE)
-                {
-                    if (mode == 1 && jugador.vidas > 0)
-                    {
-                        pausa = !pausa;
-                    }
-                    else if (mode == 2) 
+                    // También se regresará al menú des de CREDITOS
+                    else if (modo == CREDITOS) 
                     {
                         al_stop_samples();
                         num_inertes = 0;
-                        num_entidades = 0;
+                        num_enemigos = 0;
                         num_proyectiles_enemigos = 0;
                         num_proyectiles_jugador = 0;
-                        mode = 0;   
+                        modo = 0;   
                         jugador_puntos = 0; 
-                        modo_inicializar(entidades_no_vivas, mode, &num_entidades, NULL);  
-                    }        
+                        modo_inicializar(inertes, &num_inertes, modo,  NULL);  
+                    } 
+                }
+                else if (evento.keyboard.keycode == ALLEGRO_KEY_ESCAPE)
+                {
+                    // Pausar el juego
+                    if (modo == JUEGO && jugador.vidas > 0)
+                    {
+                        pausa = !pausa;
+                    }       
                 }
                 break;
             
             case ALLEGRO_EVENT_DISPLAY_SWITCH_OUT:
-                pausa = 1;
-                printf("\nMinimizado\n");
-                break;
-            case ALLEGRO_EVENT_DISPLAY_RESIZE:
-                printf("\nResize\n");
+                if (modo == JUEGO) 
+                    pausa = 1;
                 break;
             case ALLEGRO_EVENT_DISPLAY_SWITCH_IN:
-                printf("\nMaxim\n");
                 redibujar = 1;
                 break;
             case ALLEGRO_EVENT_DISPLAY_CLOSE:
-                printf("\nBye\n");
                 fin = 1;
                 break;
         }
@@ -573,6 +594,7 @@ int main()
 
     }
 
+    // Cerrando el programa.
     al_destroy_event_queue(eventos);
     al_destroy_display(disp);
     return 0;

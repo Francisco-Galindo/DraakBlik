@@ -6,6 +6,11 @@ void girar_hacia_entidad(struct Entidad *entidad_a_mover, struct Entidad entidad
     // Vamos a imaginar la velocidad en cada eje de una entidad como los componentes de un vector, así, sabiendo la posición de una entidad de destino, podemos hacer que el vector de movimiento apunte hacia allá
 
     // Calculando la distancia entre el proyectil y el jugador
+    /* 
+    Ya existe una función designada a medir la distancia entre dos entidades, pero para sernos útil aquí, también necesitamos saber la distancia en cada eje. 
+    El equipo sintió que modificar la función para esto sería complicarla de más, por la manera en que tendríamos que regresar los valores de salida).
+    */
+
     float dis_x = (entidad_a_mover->x_pos + 
                    (entidad_a_mover->ancho / 2)) - 
                     (entidad_destino.x_pos + (entidad_destino.ancho / 2));
@@ -20,6 +25,7 @@ void girar_hacia_entidad(struct Entidad *entidad_a_mover, struct Entidad entidad
     entidad_a_mover->y_vel = dis_y/const_proporcionalidad * -1;
 }
 
+// Función que usa el teorema de Pitágoras para calcular la distancia entre el centro de dos entidades
 double distancia_entre_entidades(struct Entidad entidad_uno, struct Entidad entidad_dos)
 {
     // Calculando la distancia entre el proyectil y el jugador
@@ -55,7 +61,7 @@ int checar_colisiones(struct Entidad *entidad_uno, struct Entidad *entidad_dos, 
 }
 
 // Hace lo que su nombre indica, 
-int entidad_destruir_si_esta_muerta(struct Entidad *entidad, struct Entidad entidades[], int indice, int *contador_de_entidades, int *puntaje, struct Entidad *jugador)
+int entidad_destruir_si_esta_muerta(struct Entidad entidades[], int indice, int *contador_de_entidades, int *puntaje, struct Entidad *jugador)
 {
     int tipo = entidades[indice].tipo;
     if (entidades[indice].vidas <= 0)
@@ -73,7 +79,7 @@ int entidad_destruir_si_esta_muerta(struct Entidad *entidad, struct Entidad enti
                     case MANTICORA:
                         puntaje_nuevo += 5;
                         break;
-                    case HYDRA:
+                    case HIDRA:
                         puntaje_nuevo += 10;
                         break; 
                     case FENIX:
@@ -86,7 +92,7 @@ int entidad_destruir_si_esta_muerta(struct Entidad *entidad, struct Entidad enti
             *puntaje = puntaje_nuevo;
         }
 
-        entidad_eliminar(entidades, indice, contador_de_entidades);
+        entidad_destruir(entidades, indice, contador_de_entidades);
         return tipo;
     }
     return 0;
