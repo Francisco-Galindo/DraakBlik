@@ -19,11 +19,9 @@
 #define PI 3.141592
 
 
-#define REBOTE 1
-#define BLOQUEO 2
-#define ELIMINAR 3
-
 enum modos {MENU, JUEGO, CREDITOS};
+
+enum comportamientos {BLOQUEO, ELIMINAR};
 
 enum tipos {JUGADOR, MANTICORA, FENIX, GARGOLA, HIDRA, FUEGO, JUGADOR_PROYECTIL, MANTICORA_PROYECTIL, FENIX_PROYECTIL, GARGOLA_PROYECTIL, HIDRA_PROYECTIL, GENERICO};
 
@@ -31,7 +29,7 @@ enum imagenes {JUGADOR_IMAGEN_0, JUGADOR_IMAGEN_1, CONTROL_0_IMAGEN, CONTROL_1_I
 
 enum fuentes {FUENTE_60, FUENTE_40, FUENTE_20, FUENTE_15,FUENTE_TITULO_20, FUENTE_TITULO_80, FUENTE_TITULO_50};
 
-enum sonidos {MENU_TEMA, CREDITOS_TEMA, JUEGO_TEMA, SELECCION_SONIDO, DANO_SONIDO, DISPARO_SONIDO};
+enum sonidos {MENU_TEMA, CREDITOS_TEMA, JUEGO_TEMA, SELECCION_SONIDO, DANO_SONIDO, DISPARO_SONIDO, VIDA_SONIDO, EXPLOSION_SONIDO};
 
 // Declaración de la estructura de una entidad, en la que se basan todos los personajes y proyectiles del juego
 struct Entidad
@@ -58,8 +56,8 @@ struct Usuario
 
 
 ALLEGRO_BITMAP *imagenes[33];
-ALLEGRO_FONT *fuentes[10];
-ALLEGRO_SAMPLE *sonidos[11];
+ALLEGRO_FONT *fuentes[7];
+ALLEGRO_SAMPLE *sonidos[8];
 
 
 // Aquí cargamos todas las imágenes que serán usadas en el juego, cada una se asigna a una localidad del arreglo de apuntadores a imágenes.
@@ -100,7 +98,7 @@ void imagenes_cargar(int *fin)
     imagenes[PROYECTIL_4_IMAGEN] = al_load_bitmap("Imagenes/disparo_manticora.png");
 
     // Se itera sobre todas las imagenes para checar si se han cargado correctamente, de lo contrario, avisarlo.
-    for (int i = 0; i < PROYECTIL_4_IMAGEN; i++)
+    for (int i = 0; i <= PROYECTIL_4_IMAGEN; i++)
     {
         if (!imagenes[i])
         {
@@ -120,7 +118,7 @@ void fuentes_cargar(int *fin)
     fuentes[FUENTE_TITULO_20] = al_load_font("Fuentes/PerfectDOSVGA437.ttf", 20, 0);
     fuentes[FUENTE_TITULO_80] = al_load_font("Fuentes/PerfectDOSVGA437.ttf", 80, 0);
     fuentes[FUENTE_TITULO_50] = al_load_font("Fuentes/PerfectDOSVGA437.ttf", 50, 0);
-    for (int i = 0; i < FUENTE_TITULO_50; i++)
+    for (int i = 0; i <= FUENTE_TITULO_50; i++)
     {
         if (!fuentes[i])
         {
@@ -138,7 +136,9 @@ void sonidos_cargar(int *fin)
     sonidos[SELECCION_SONIDO] = al_load_sample("Audio/select.wav");
     sonidos[DANO_SONIDO] = al_load_sample("Audio/dano.wav");
     sonidos[DISPARO_SONIDO] = al_load_sample("Audio/disparo_sonido.wav");
-    for (int i = 0; i < DISPARO_SONIDO; i++)
+    sonidos[VIDA_SONIDO] = al_load_sample("Audio/vida_sonido.wav");
+    sonidos[EXPLOSION_SONIDO] = al_load_sample("Audio/explosion_sonido.wav");
+    for (int i = 0; i <= EXPLOSION_SONIDO; i++)
     {
         if(!sonidos[i])
         {

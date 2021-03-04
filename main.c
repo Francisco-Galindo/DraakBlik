@@ -204,14 +204,14 @@ int main()
                         if (num_enemigos < 5 && rand()%FPS == 3)
                         {
                             int tipo;
-                            int numero_aleatorio = rand()%16;
+                            int numero_aleatorio = rand()%100;
 
                             // Eligiendo el tipo de entidad que se va a crear, dependiendo del numero aleatorio generado.
-                            if (numero_aleatorio >= 0 && numero_aleatorio <= 7)
+                            if (numero_aleatorio >= 0 && numero_aleatorio <= 49)
                                 tipo = GARGOLA;
-                            else if (numero_aleatorio >= 9 && numero_aleatorio <= 12)
+                            else if (numero_aleatorio >= 50 && numero_aleatorio <= 74)
                                 tipo = MANTICORA;
-                            else if (numero_aleatorio >= 13 && numero_aleatorio <= 14)
+                            else if (numero_aleatorio >= 75 && numero_aleatorio <= 96)
                                 tipo = HIDRA;
                             else 
                                 tipo = FENIX;
@@ -336,16 +336,21 @@ int main()
                             {
                                 if (checar_colisiones(&proyectiles_jugador[i], &enemigos[j], NULL))
                                 {
-                                    entidad_destruir_si_esta_muerta(proyectiles_jugador, i, &num_proyectiles_jugador, NULL, NULL);
-                                    if(enemigos[j].tipo==FENIX&&jugador.vidas<=4)
-                                        jugador.vidas+=1;
-                                
+                                    entidad_destruir_si_esta_muerta(proyectiles_jugador, i, &num_proyectiles_jugador, NULL, NULL); 
+                        
+                                    // Darle una vida al jugador si mata a un Fénix.
+                                    if(enemigos[j].tipo == FENIX)
+                                    {
+                                        jugador.vidas += 1;
+                                        al_play_sample(sonidos[VIDA_SONIDO], 1, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
+                                    }
+                                    
                                     //Dibuja una explosión en las coordenas de donde estaba el protectil enemigo.
                                     entidad_crear(inertes,&num_inertes, GENERICO, NULL,imagenes[EXPLOSION_IMAGEN]);
                                     inertes[num_inertes-1].x_pos = enemigos[j].x_pos;
                                     inertes[num_inertes-1].y_pos = enemigos[j].y_pos;
-                                    
                                     entidad_destruir_si_esta_muerta(enemigos, j, &num_enemigos, &jugador_puntos, &jugador);
+
                                 }
                             }
                             for (int j = 0; j < num_proyectiles_enemigos; j++)

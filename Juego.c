@@ -1,6 +1,7 @@
 #include "menuYCreditos.c"
 
 
+
 void girar_hacia_entidad(struct Entidad *entidad_a_mover, struct Entidad entidad_destino)
 {
     // Vamos a imaginar la velocidad en cada eje de una entidad como los componentes de un vector, así, sabiendo la posición de una entidad de destino, podemos hacer que el vector de movimiento apunte hacia allá
@@ -91,7 +92,7 @@ int entidad_destruir_si_esta_muerta(struct Entidad entidades[], int indice, int 
             }
             *puntaje = puntaje_nuevo;
         }
-
+        al_play_sample(sonidos[EXPLOSION_SONIDO], 0.1, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
         entidad_destruir(entidades, indice, contador_de_entidades);
         return tipo;
     }
