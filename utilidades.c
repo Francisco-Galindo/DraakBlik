@@ -141,9 +141,9 @@ void fuentes_cargar(int *fin)
 
 void sonidos_cargar(int *fin)
 {
-    sonidos[MENU_TEMA] = al_load_sample("Audio/SoundtrackMenu.mp3");
-    sonidos[CREDITOS_TEMA] = al_load_sample("Audio/SoundtrackCreditos.mp3");
-    sonidos[JUEGO_TEMA] = al_load_sample("Audio/SoundtrackJuego2.mp3");
+    sonidos[MENU_TEMA] = al_load_sample("Audio/soundtrack_menu.mp3");
+    sonidos[CREDITOS_TEMA] = al_load_sample("Audio/soundtrack_creditos.mp3");
+    sonidos[JUEGO_TEMA] = al_load_sample("Audio/soundtrack_juego.mp3");
     sonidos[SELECCION_SONIDO] = al_load_sample("Audio/select.wav");
     sonidos[DANO_SONIDO] = al_load_sample("Audio/dano.wav");
     sonidos[DISPARO_SONIDO] = al_load_sample("Audio/disparo_sonido.wav");
@@ -152,6 +152,7 @@ void sonidos_cargar(int *fin)
         if(!sonidos[i])
         {
             printf("No se ha podido cargar el sonido %i\n", i);
+            *fin =  1;
         }
     }
 }
