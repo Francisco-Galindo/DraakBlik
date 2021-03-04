@@ -4,7 +4,7 @@
 ALLEGRO_COLOR cambiar_color_boton(int opcion, int boton)
 {
     ALLEGRO_COLOR color_select;
-    if (opci == boton)
+    if (opcion == boton)
         color_select= al_map_rgb(212, 197, 32);
     else
         color_select= al_map_rgb(212, 122, 32);
