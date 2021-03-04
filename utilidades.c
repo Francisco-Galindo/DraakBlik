@@ -541,7 +541,6 @@ void modo_inicializar(struct Entidad entidades[], int *contador, int modo,  stru
             entidades[5].x_vel = ((VEL/(float)FPS)/-4);
 
             entidad_inicializar(jugador, JUGADOR, NULL, NULL);
-            printf("lol\n");
             break;
         case CREDITOS:
 

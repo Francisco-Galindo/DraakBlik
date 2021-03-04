@@ -39,7 +39,7 @@ int main()
 
     if(!al_init_font_addon() || !al_init_ttf_addon())
     {
-        printf("No se pudieronn cargar las fuentes lol");
+        printf("No se pudieron cargar las fuentes");
         fin = 1;
     }
     
@@ -73,7 +73,7 @@ int main()
 
     if (!al_reserve_samples(32))
     {
-        printf("No se pudo cargar mixer");
+        printf("No se pudo cargar el mixer");
         fin = 1;
     }
     sonidos_cargar(&fin);
@@ -343,7 +343,7 @@ int main()
                                     entidad_destruir_si_esta_muerta(proyectiles_jugador, i, &num_proyectiles_jugador, NULL, NULL); 
                         
                                     // Darle una vida al jugador si mata a un Fénix.
-                                    if(enemigos[j].tipo == FENIX)
+                                    if(enemigos[j].tipo == FENIX && jugador.vidas < 5)
                                     {
                                         jugador.vidas += 1;
                                         al_play_sample(sonidos[VIDA_SONIDO], 1, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
@@ -428,9 +428,9 @@ int main()
                         }
                         if (al_get_timer_count(anim) % 3 == 0)
                         {
-                            for(int i = 0; i < num_inertes; i++)
+                            for(int i = 0; i < INERTES_MAX; i++)
                             {
-                                if(inertes[i].sprite == imagenes[EXPLOSION_IMAGEN])
+                                if(inertes[i].sprite == imagenes[EXPLOSION_IMAGEN] && num_inertes > 6)
                                 {
                                     entidad_destruir(inertes, i, &num_inertes);
 
