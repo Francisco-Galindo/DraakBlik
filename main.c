@@ -164,9 +164,9 @@ int main()
                         al_draw_text(fuentes[FUENTE_15], al_map_rgb(245, 206, 66), ANCHO/2, 390, ALLEGRO_ALIGN_CENTRE, "PRESIONA ENTER PARA IR AL MENU");
                         al_draw_scaled_bitmap(imagenes[CONTROL_0_IMAGEN], 0, 0, al_get_bitmap_width(imagenes[CONTROL_0_IMAGEN]), al_get_bitmap_height(imagenes[CONTROL_0_IMAGEN]), 110, 150 ,200, 150, 0);
                         al_draw_scaled_bitmap(imagenes[CONTROL_1_IMAGEN], 0, 0, al_get_bitmap_width(imagenes[CONTROL_1_IMAGEN]), al_get_bitmap_height(imagenes[CONTROL_0_IMAGEN]), 330, 150 ,200, 150, 0);
-                        al_draw_text(fuentes[FUENTE_15], al_map_rgb(255, 255,255), ANCHO/2, 120, ALLEGRO_ALIGN_CENTRE, "Movimiento:");
-                        al_draw_text(fuentes[FUENTE_15], al_map_rgb(255, 255,255), ANCHO/2, 320, ALLEGRO_ALIGN_CENTRE, "Disparo:");
-                        al_draw_text(fuentes[FUENTE_15], al_map_rgb(255, 255,255), ANCHO/2, 355, ALLEGRO_ALIGN_CENTRE, "ESPACIO");
+                        al_draw_text(fuentes[FUENTE_15], al_map_rgb(255, 255,255), ANCHO/2, 120, ALLEGRO_ALIGN_CENTRE, "MOVIMIENTO:");
+                        al_draw_text(fuentes[FUENTE_15], al_map_rgb(255, 255,255), ANCHO/2, 320, ALLEGRO_ALIGN_CENTRE, "    DISPARAR:                PAUSA/PLAY:");
+                        al_draw_text(fuentes[FUENTE_15], al_map_rgb(255, 255,255), ANCHO/2, 355, ALLEGRO_ALIGN_CENTRE, "ESPACIO                     ESC");
                     }
                     else
                     {
