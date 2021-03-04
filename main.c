@@ -1,4 +1,4 @@
-#include "juego.c"
+#include "menuYCreditos.c"
 
 
 #define ENEMIGOS_MAX 5
@@ -238,7 +238,7 @@ int main()
                                     // Creando un proyectil que vaya hacia el jugador.
                                     entidad_crear(proyectiles_enemigo, &num_proyectiles_enemigos, MANTICORA_PROYECTIL, &enemigos[i], NULL);
                                     int indice = num_proyectiles_enemigos-1;
-                                    girar_hacia_entidad(&proyectiles_enemigo[indice], jugador);
+                                    entidad_perseguir(&proyectiles_enemigo[indice], jugador);
                                 }
                                 
                                 // Las mantícoras van a rebotar en los bordes de la pantalla.
@@ -256,7 +256,7 @@ int main()
                                     entidad_crear(proyectiles_enemigo, &num_proyectiles_enemigos, GARGOLA_PROYECTIL, &enemigos[i], NULL);
 
                                 // Las gárgolas se moverán hacia el jugador.
-                                girar_hacia_entidad(&enemigos[i], jugador);
+                                entidad_perseguir(&enemigos[i], jugador);
                             }
                             else if (enemigos[i].tipo == HIDRA)
                             {
@@ -288,14 +288,14 @@ int main()
                                 {
                                     // Creando el disparo del fénix, el cual va a dirigirse al jugador.
                                     entidad_crear(proyectiles_enemigo, &num_proyectiles_enemigos, FENIX_PROYECTIL, &enemigos[i], NULL);
-                                    girar_hacia_entidad(&proyectiles_enemigo[num_proyectiles_enemigos-1], jugador);
+                                    entidad_perseguir(&proyectiles_enemigo[num_proyectiles_enemigos-1], jugador);
                                 }
 
                                 if (distancia_entre_entidades(enemigos[i], jugador) > (ALTO/2)+(enemigos[i].max_vel))
-                                    girar_hacia_entidad(&enemigos[i], jugador);
+                                    entidad_perseguir(&enemigos[i], jugador);
                                 else if (distancia_entre_entidades(enemigos[i], jugador) < (ALTO/2)-(enemigos[i].max_vel))
                                 {
-                                    girar_hacia_entidad(&enemigos[i], jugador);
+                                    entidad_perseguir(&enemigos[i], jugador);
                                     enemigos[i].x_vel *= -1;
                                     enemigos[i].y_vel *= -1;
                                 }
@@ -307,7 +307,7 @@ int main()
                             }
 
                             // Colisiones de los enemigos con el jugador.
-                            if (danado == 0 && checar_colisiones(&jugador, &enemigos[i], &danado))
+                            if (danado == 0 && entidades_reducir_vida_si_colisionan(&jugador, &enemigos[i], &danado))
                             {
                                 al_set_timer_count(framerate, 0);
                                 if (jugador.vidas <= 0)
@@ -338,7 +338,7 @@ int main()
                             
                             for (int j = 0; j < num_enemigos; j++)
                             {
-                                if (checar_colisiones(&proyectiles_jugador[i], &enemigos[j], NULL))
+                                if (entidades_reducir_vida_si_colisionan(&proyectiles_jugador[i], &enemigos[j], NULL))
                                 {
                                     entidad_destruir_si_esta_muerta(proyectiles_jugador, i, &num_proyectiles_jugador, NULL, NULL); 
                         
@@ -359,7 +359,7 @@ int main()
                             }
                             for (int j = 0; j < num_proyectiles_enemigos; j++)
                             {
-                                if (checar_colisiones(&proyectiles_jugador[i], &proyectiles_enemigo[j], NULL))
+                                if (entidades_reducir_vida_si_colisionan(&proyectiles_jugador[i], &proyectiles_enemigo[j], NULL))
                                 {
                                     entidad_destruir_si_esta_muerta(proyectiles_jugador, i, &num_proyectiles_jugador, NULL, NULL);
                                     entidad_destruir_si_esta_muerta( proyectiles_enemigo, j, &num_proyectiles_enemigos, NULL, NULL);
@@ -375,7 +375,7 @@ int main()
                             if (!entidad_mover(&proyectiles_enemigo[i], ELIMINAR))
                                 entidad_destruir(proyectiles_enemigo, i, &num_proyectiles_enemigos);
             
-                            if (danado == 0 && checar_colisiones(&jugador, &proyectiles_enemigo[i], &danado))
+                            if (danado == 0 && entidades_reducir_vida_si_colisionan(&jugador, &proyectiles_enemigo[i], &danado))
                             {
                                 al_set_timer_count(framerate, 0);
                                 if (jugador.vidas <= 0)
