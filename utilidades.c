@@ -46,12 +46,6 @@ struct Entidad
     float ancho;
 };
 
-struct Usuario
-{
-    char nombre[16];
-    int puntaje;
-};
-
 
 
 
@@ -394,7 +388,7 @@ void entidad_perseguir(struct Entidad *entidad_a_mover, struct Entidad entidad_d
     entidad_a_mover->y_vel = dis_y/const_proporcionalidad * -1;
 }
 
-// Esta subrutina alterna entre los diferentes sprites que cada una de las entidades animadas tienen
+// Esta subrutina alterna entre los diferentes sprites que cada una de las entidades animadas tienen.
 void entidad_animar(struct Entidad *entidad)
 {
     // En cada uno de los casos del switch, la imagen de la entidad en cuestión será cambiada por la siguiente para animarla.
@@ -547,6 +541,7 @@ void modo_inicializar(struct Entidad entidades[], int *contador, int modo,  stru
             entidades[5].x_vel = ((VEL/(float)FPS)/-4);
 
             entidad_inicializar(jugador, JUGADOR, NULL, NULL);
+            printf("lol\n");
             break;
         case CREDITOS:
 

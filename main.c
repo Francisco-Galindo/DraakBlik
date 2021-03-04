@@ -1,7 +1,7 @@
 #include "menuYCreditos.c"
 
 
-#define ENEMIGOS_MAX 5
+#define ENEMIGOS_MAX 10
 #define PROTECTILES_JUGADOR_MAX 64
 #define PROTECTILES_ENEMIGO_MAX 64
 #define INERTES_MAX 32
@@ -428,10 +428,13 @@ int main()
                         }
                         if (al_get_timer_count(anim) % 3 == 0)
                         {
-                            for(int i=0; i< 64; i++)
+                            for(int i = 0; i < num_inertes; i++)
                             {
                                 if(inertes[i].sprite == imagenes[EXPLOSION_IMAGEN])
-                                    entidad_destruir(inertes, i,&num_inertes);
+                                {
+                                    entidad_destruir(inertes, i, &num_inertes);
+
+                                }
 
                             }
                         }
