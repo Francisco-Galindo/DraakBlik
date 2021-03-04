@@ -364,7 +364,7 @@ void modo_inicializar(struct Entidad entidades[], int modo, int *contador, struc
     switch (modo)
     {
         case 0:
-            al_play_sample(sonidos[MENU_TEMA], 0.25, 0, 1, ALLEGRO_PLAYMODE_LOOP, NULL); 
+            al_play_sample(sonidos[MENU_TEMA], 0.20, 0, 1, ALLEGRO_PLAYMODE_LOOP, NULL); 
             entidad_crear(entidades, contador, FUEGO, NULL, NULL);
             entidad_crear(entidades, contador, FUEGO, NULL, NULL);
             entidades[0].x_pos = 15;
@@ -374,7 +374,7 @@ void modo_inicializar(struct Entidad entidades[], int modo, int *contador, struc
             entidades[1].y_pos = 105;
             break;
         case 1:
-            al_play_sample(sonidos[JUEGO_TEMA], 0.25, 0, 1, ALLEGRO_PLAYMODE_LOOP, NULL); 
+            al_play_sample(sonidos[JUEGO_TEMA], 0.20, 0, 1, ALLEGRO_PLAYMODE_LOOP, NULL); 
             entidad_crear(entidades, contador, GENERICO, NULL, imagenes[FONDO_0_IMAGEN]);
             entidades[0].x_pos = 0;
             entidades[0].y_pos = 0;

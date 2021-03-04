@@ -332,8 +332,8 @@ int main()
                                 
                                     //Dibuja una explosión en las coordenas de donde estaba el enemigo
                                     entidad_crear(entidades_no_vivas,&num_inertes, GENERICO, NULL,imagenes[EXPLOSION_IMAGEN]);
-                                    entidades_no_vivas[num_inertes-1].x_pos = entidades[i].x_pos;
-                                    entidades_no_vivas[num_inertes-1].y_pos = entidades[i].y_pos;
+                                    entidades_no_vivas[num_inertes-1].x_pos = entidades[j].x_pos;
+                                    entidades_no_vivas[num_inertes-1].y_pos = entidades[j].y_pos;
                                     
                                     entidad_destruir_si_esta_muerta(&entidades[j], entidades, j, &num_entidades, &jugador_puntos, &jugador);
                                 }
