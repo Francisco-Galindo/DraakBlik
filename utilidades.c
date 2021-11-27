@@ -74,8 +74,8 @@ void imagenes_cargar(int *fin)
     imagenes[FONDO_1_IMAGEN] = al_load_bitmap("Imagenes/mnt_7.png");
     imagenes[FONDO_2_IMAGEN] = al_load_bitmap("Imagenes/mnt_9.png");
     imagenes[FONDO_3_IMAGEN] = al_load_bitmap("Imagenes/mnt_10.png");
-    imagenes[TORRE_0_IMAGEN] = al_load_bitmap("Imagenes/torre3.png");
-    imagenes[TORRE_1_IMAGEN] = al_load_bitmap("Imagenes/torre4.png");
+    imagenes[TORRE_0_IMAGEN] = al_load_bitmap("Imagenes/Torre3.png");
+    imagenes[TORRE_1_IMAGEN] = al_load_bitmap("Imagenes/Torre4.png");
     imagenes[EXPLOSION_IMAGEN] = al_load_bitmap("Imagenes/Explosion.png");
     imagenes[MANTICORA_IMAGEN_0] = al_load_bitmap("Imagenes/quimera.png");
     imagenes[MANTICORA_IMAGEN_1] = al_load_bitmap("Imagenes/quimera_abajo.png");
@@ -124,9 +124,9 @@ void fuentes_cargar(int *fin)
 
 void sonidos_cargar(int *fin)
 {
-    sonidos[MENU_TEMA] = al_load_sample("Audio/soundtrack_menu.mp3");
-    sonidos[CREDITOS_TEMA] = al_load_sample("Audio/soundtrack_creditos.mp3");
-    sonidos[JUEGO_TEMA] = al_load_sample("Audio/soundtrack_juego.mp3");
+    sonidos[MENU_TEMA] = al_load_sample("Audio/soundtrack_menu.wav");
+    sonidos[CREDITOS_TEMA] = al_load_sample("Audio/soundtrack_creditos.wav");
+    sonidos[JUEGO_TEMA] = al_load_sample("Audio/soundtrack_juego.wav");
     sonidos[SELECCION_SONIDO] = al_load_sample("Audio/select.wav");
     sonidos[DANO_SONIDO] = al_load_sample("Audio/dano.wav");
     sonidos[DISPARO_SONIDO] = al_load_sample("Audio/disparo_sonido.wav");
@@ -251,7 +251,7 @@ void entidad_inicializar(struct Entidad *entidad, int tipo, struct Entidad *enti
             entidad->ancho = al_get_bitmap_width(entidad->sprite)*0.15;
             break;
         default:
-            entidad->tipo = GENERICO; 
+            entidad->tipo = GENERICO;
             entidad->sprite = imagen;
             entidad->alto = al_get_bitmap_height(entidad->sprite);
             entidad->ancho = al_get_bitmap_width(entidad->sprite);
@@ -299,13 +299,13 @@ int entidad_destruir_si_esta_muerta(struct Entidad entidades[], int indice, int 
                         break;
                     case HIDRA:
                         puntaje_nuevo += 10;
-                        break; 
+                        break;
                     case FENIX:
                         puntaje_nuevo += 15;
-                        break;                                  
+                        break;
                     default:
                         break;
-                } 
+                }
             }
             *puntaje = puntaje_nuevo;
         }
@@ -336,19 +336,19 @@ int entidad_mover(struct Entidad *entidad, int comportamiento)
     entidad->x_pos += entidad->x_vel;
     if (comportamiento == BLOQUEO)
     {
-        if (entidad->y_pos > ALTO-entidad->alto) 
+        if (entidad->y_pos > ALTO-entidad->alto)
             entidad->y_pos = ALTO-entidad->alto;
         else if (entidad->y_pos < 0)
             entidad->y_pos = 0;
 
-        if (entidad->x_pos > ANCHO-entidad->ancho) 
+        if (entidad->x_pos > ANCHO-entidad->ancho)
             entidad->x_pos = ANCHO-entidad->ancho;
         else if (entidad->x_pos < 0)
             entidad->x_pos = 0;
 
     }
-    else if (entidad->y_pos > ALTO || entidad->y_pos < 0 - entidad->alto || 
-            entidad->x_pos > ANCHO|| entidad->x_pos < 0 - entidad->ancho) 
+    else if (entidad->y_pos > ALTO || entidad->y_pos < 0 - entidad->alto ||
+            entidad->x_pos > ANCHO|| entidad->x_pos < 0 - entidad->ancho)
     {
         mov_valido = 0;
     }
@@ -356,7 +356,7 @@ int entidad_mover(struct Entidad *entidad, int comportamiento)
     return mov_valido;
 }
 
-// La sunbrutina cambia los valores de velocidad en cada eje para que, en la siguiente llamada a "entidad_mover()", la entidad se mueva en el ángulo deseado (el ángulo debes estar en radianes). 
+// La sunbrutina cambia los valores de velocidad en cada eje para que, en la siguiente llamada a "entidad_mover()", la entidad se mueva en el ángulo deseado (el ángulo debes estar en radianes).
 void cambiar_angulo_movimiento(struct Entidad *entidad, double angulo)
 {
     entidad->x_vel = cos(angulo) * (entidad->max_vel);
@@ -369,16 +369,16 @@ void entidad_perseguir(struct Entidad *entidad_a_mover, struct Entidad entidad_d
     // Vamos a imaginar la velocidad en cada eje de una entidad como los componentes de un vector, así, sabiendo la posición de una entidad de destino, podemos hacer que el vector de movimiento apunte hacia allá
 
     // Calculando la distancia entre el proyectil y el jugador
-    /* 
-    Ya existe una función designada a medir la distancia entre dos entidades, pero para sernos útil aquí, también necesitamos saber la distancia en cada eje. 
+    /*
+    Ya existe una función designada a medir la distancia entre dos entidades, pero para sernos útil aquí, también necesitamos saber la distancia en cada eje.
     El equipo sintió que modificar la función para esto sería complicarla de más, por la manera en que tendríamos que regresar los valores de salida).
     */
 
-    float dis_x = (entidad_a_mover->x_pos + 
-                   (entidad_a_mover->ancho / 2)) - 
+    float dis_x = (entidad_a_mover->x_pos +
+                   (entidad_a_mover->ancho / 2)) -
                     (entidad_destino.x_pos + (entidad_destino.ancho / 2));
-    float dis_y = (entidad_a_mover->y_pos + 
-                   (entidad_a_mover->alto / 2)) - 
+    float dis_y = (entidad_a_mover->y_pos +
+                   (entidad_a_mover->alto / 2)) -
                    (entidad_destino.y_pos + (entidad_destino.alto / 2));
     double dis_total = pow((dis_x * dis_x) + (dis_y * dis_y), 0.5);
 
@@ -442,24 +442,24 @@ int colisiona_AABB(struct Entidad entidad_uno, struct Entidad entidad_dos)
 {
     int colisiona = 0;
     if (entidad_uno.x_pos < (entidad_dos.x_pos + entidad_dos.ancho) &&
-        (entidad_uno.x_pos + entidad_uno.ancho) > entidad_dos.x_pos && 
+        (entidad_uno.x_pos + entidad_uno.ancho) > entidad_dos.x_pos &&
         entidad_uno.y_pos < (entidad_dos.y_pos + entidad_dos.alto) &&
         (entidad_uno.y_pos + entidad_uno.alto) > entidad_dos.y_pos)
     {
         colisiona = 1;
     }
-    return colisiona; 
+    return colisiona;
 }
 
 // Función que usa el teorema de Pitágoras para calcular la distancia entre el centro de dos entidades.
 double distancia_entre_entidades(struct Entidad entidad_uno, struct Entidad entidad_dos)
 {
     // Calculando la distancia entre el proyectil y el jugador
-    float dis_x = (entidad_uno.x_pos + 
-                   (entidad_uno.ancho / 2)) - 
+    float dis_x = (entidad_uno.x_pos +
+                   (entidad_uno.ancho / 2)) -
                     (entidad_dos.x_pos + (entidad_dos.ancho / 2));
-    float dis_y = (entidad_uno.y_pos + 
-                   (entidad_uno.alto / 2)) - 
+    float dis_y = (entidad_uno.y_pos +
+                   (entidad_uno.alto / 2)) -
                    (entidad_dos.y_pos + (entidad_dos.alto / 2));
     double dis_total = pow((dis_x * dis_x) + (dis_y * dis_y), 0.5);
 
@@ -481,7 +481,7 @@ int entidades_reducir_vida_si_colisionan(struct Entidad *entidad_uno, struct Ent
 
         entidad_uno->vidas --;
         entidad_dos->vidas--;
-        
+
         colisionaron = 1;
     }
     return colisionaron;
@@ -493,9 +493,9 @@ void modo_inicializar(struct Entidad entidades[], int *contador, int modo,  stru
 {
     switch (modo)
     {
-        case MENU: 
+        case MENU:
             // Se reproduce el tema del menú.
-            al_play_sample(sonidos[MENU_TEMA], 0.20, 0, 1, ALLEGRO_PLAYMODE_LOOP, NULL);    
+            al_play_sample(sonidos[MENU_TEMA], 0.20, 0, 1, ALLEGRO_PLAYMODE_LOOP, NULL);
             // Se crean dos entidades tipo fuego para poder dibujarlas en el menú.
             entidad_crear(entidades, contador, FUEGO, NULL, NULL);
             entidad_crear(entidades, contador, FUEGO, NULL, NULL);
@@ -508,10 +508,10 @@ void modo_inicializar(struct Entidad entidades[], int *contador, int modo,  stru
         case JUEGO:
 
             // Se reproduce el tema del juego.
-            al_play_sample(sonidos[JUEGO_TEMA], 0.20, 0, 1, ALLEGRO_PLAYMODE_LOOP, NULL); 
+            al_play_sample(sonidos[JUEGO_TEMA], 0.20, 0, 1, ALLEGRO_PLAYMODE_LOOP, NULL);
 
             /*
-            Se crean entidades para representar las montañas de fondo, se hace en pares, donde se mueva una entidad detrás de otra para poder crear la ilusión de que es una sóla imágen con longitud infinita 
+            Se crean entidades para representar las montañas de fondo, se hace en pares, donde se mueva una entidad detrás de otra para poder crear la ilusión de que es una sóla imágen con longitud infinita
             */
             entidad_crear(entidades, contador, GENERICO, NULL, imagenes[FONDO_0_IMAGEN]);
             entidades[0].x_pos = 0;
@@ -571,19 +571,19 @@ int puntaje_mas_alto_obtener()
     }
     fclose(puntaje_archivo);
 
-    return puntaje; 
+    return puntaje;
 }
 
 // Abre el archivo donde se guardan los puntajes, y escribe ahí el puntaje que recibió como parámetro de entrada.
 void puntaje_mas_alto_guardar(int puntaje)
 {
-    
+
     FILE *puntaje_archivo = fopen("puntaje.uwu", "wb");
     if (puntaje_archivo == NULL)
     {
         printf("Error al cargar el archivo\n");
         return;
-    }    
+    }
     rewind(puntaje_archivo);
     fwrite(&puntaje, sizeof(int), 1, puntaje_archivo);
     fclose(puntaje_archivo);
