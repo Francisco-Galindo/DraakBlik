@@ -55,7 +55,8 @@ ALLEGRO_SAMPLE *sonidos[8];
 
 
 // Aquí cargamos todas las imágenes que serán usadas en el juego, cada una se asigna a una localidad del arreglo de apuntadores a imágenes.
-void imagenes_cargar(int *fin)
+void
+imagenes_cargar(int *fin)
 {
 	imagenes[JUGADOR_IMAGEN_0] = al_load_bitmap("Imagenes/drav.png");
 	imagenes[JUGADOR_IMAGEN_1] = al_load_bitmap("Imagenes/drav_abajo.png");
@@ -103,7 +104,8 @@ void imagenes_cargar(int *fin)
 }
 
 
-void fuentes_cargar(int *fin)
+void
+fuentes_cargar(int *fin)
 {
 	fuentes[FUENTE_60] = al_load_font("Fuentes/PressStart2P.ttf", 60, 0);
 	fuentes[FUENTE_40] = al_load_font("Fuentes/PressStart2P.ttf", 40, 0);
@@ -122,7 +124,8 @@ void fuentes_cargar(int *fin)
 	}
 }
 
-void sonidos_cargar(int *fin)
+void
+sonidos_cargar(int *fin)
 {
 	sonidos[MENU_TEMA] = al_load_sample("Audio/soundtrack_menu.wav");
 	sonidos[CREDITOS_TEMA] = al_load_sample("Audio/soundtrack_creditos.wav");
@@ -144,7 +147,8 @@ void sonidos_cargar(int *fin)
 
 
 // Se encarga de inicializar una entidad, el primer argumento es la entidad que se quiere inicializar; el segundo representa qué tipo de entidad es; el tercero es un apuntador a otra entidad de referencia, en caso de ser necesario.
-void entidad_inicializar(struct Entidad *entidad, int tipo, struct Entidad *entidad_origen, ALLEGRO_BITMAP *imagen)
+void
+entidad_inicializar(struct Entidad *entidad, int tipo, struct Entidad *entidad_origen, ALLEGRO_BITMAP *imagen)
 {
 	// Asignando los valores de algunos campos comúnes a la entidad.
 	entidad->x_pos = 0;
@@ -261,7 +265,8 @@ void entidad_inicializar(struct Entidad *entidad, int tipo, struct Entidad *enti
 
 
 // La subrutina toma como parámetro el arreglo de todas las entidades, junto con el tipo de entidad que se quiere crear, y una entidad de origen en caso de ser necesaria. Se encarga de añadir dicha entidad al arreglo y aumentar el contador de entidades.
-void entidad_crear(struct Entidad entidades[], int *contador, int tipo, struct Entidad *entidad_origen, ALLEGRO_BITMAP *imagen)
+void
+entidad_crear(struct Entidad entidades[], int *contador, int tipo, struct Entidad *entidad_origen, ALLEGRO_BITMAP *imagen)
 {
 	int count = *contador;
 	entidad_inicializar(&entidades[count], tipo, entidad_origen, imagen);
@@ -270,7 +275,8 @@ void entidad_crear(struct Entidad entidades[], int *contador, int tipo, struct E
 
 
 // Esta subrutina se usa para poder "eliminar" una entidad del arreglo de entidades, esto se logra moviendo un lugar las entidades que vengan después de aquella entidad que se quiere eliminar.
-void entidad_destruir(struct Entidad entidades[], int indice, int *contador)
+void
+entidad_destruir(struct Entidad entidades[], int indice, int *contador)
 {
 	int count = *contador;
 	for (int i = indice; i < count; i++)
@@ -279,7 +285,8 @@ void entidad_destruir(struct Entidad entidades[], int indice, int *contador)
 }
 
 // Hace lo que su nombre indica, toma de parámetros el arreglo del que se va a destruir la entidad, el índice en el que se encuentra, un apuntador al contador de entidades, un apuntador al puntaje del jugador, y un apuntador al jugador.
-int entidad_destruir_si_esta_muerta(struct Entidad entidades[], int indice, int *contador_de_entidades, int *puntaje, struct Entidad *jugador)
+int
+entidad_destruir_si_esta_muerta(struct Entidad entidades[], int indice, int *contador_de_entidades, int *puntaje, struct Entidad *jugador)
 {
 	int tipo = entidades[indice].tipo;
 	if (entidades[indice].vidas <= 0)
@@ -317,7 +324,8 @@ int entidad_destruir_si_esta_muerta(struct Entidad entidades[], int indice, int 
 }
 
 // Su tarea es dibujar una entidad, basándose en sus coordenadasy tamaño.
-void entidad_dibujar(struct Entidad entidad)
+void
+entidad_dibujar(struct Entidad entidad)
 {
 	int flag = 0;
 
@@ -329,7 +337,8 @@ void entidad_dibujar(struct Entidad entidad)
  Se encarga de mover una entidad dada en cierta dirección, varias llamadas conjuntas a esta funión pueden resultar en movimientos diagonales
 Toma como argumentos 2 apuntadores de las coordenadas de la entidad, tambien delta (su velocidad) y la direccion en la que se debe mover dicha entidad.
 */
-int entidad_mover(struct Entidad *entidad, int comportamiento)
+int
+entidad_mover(struct Entidad *entidad, int comportamiento)
 {
 	int mov_valido = 1;
 	entidad->y_pos += entidad->y_vel;
@@ -357,14 +366,16 @@ int entidad_mover(struct Entidad *entidad, int comportamiento)
 }
 
 // La sunbrutina cambia los valores de velocidad en cada eje para que, en la siguiente llamada a "entidad_mover()", la entidad se mueva en el ángulo deseado (el ángulo debes estar en radianes).
-void cambiar_angulo_movimiento(struct Entidad *entidad, double angulo)
+void
+cambiar_angulo_movimiento(struct Entidad *entidad, double angulo)
 {
 	entidad->x_vel = cos(angulo) * (entidad->max_vel);
 	entidad->y_vel = sin(angulo) * (entidad->max_vel);
 }
 
 
-void entidad_perseguir(struct Entidad *entidad_a_mover, struct Entidad entidad_destino)
+void
+entidad_perseguir(struct Entidad *entidad_a_mover, struct Entidad entidad_destino)
 {
 	// Vamos a imaginar la velocidad en cada eje de una entidad como los componentes de un vector, así, sabiendo la posición de una entidad de destino, podemos hacer que el vector de movimiento apunte hacia allá
 
@@ -389,7 +400,8 @@ void entidad_perseguir(struct Entidad *entidad_a_mover, struct Entidad entidad_d
 }
 
 // Esta subrutina alterna entre los diferentes sprites que cada una de las entidades animadas tienen.
-void entidad_animar(struct Entidad *entidad)
+void
+entidad_animar(struct Entidad *entidad)
 {
 	// En cada uno de los casos del switch, la imagen de la entidad en cuestión será cambiada por la siguiente para animarla.
 	switch (entidad->tipo)
@@ -438,36 +450,39 @@ void entidad_animar(struct Entidad *entidad)
 }
 
 // Función que checa si una entidad colisiona con otra, se usa el método "Axis-Aligned Bounding Box" (AABB).
-int colisiona_AABB(struct Entidad entidad_uno, struct Entidad entidad_dos)
+int
+colisiona_AABB(struct Entidad entidad_uno, struct Entidad entidad_dos)
 {
-	int colisiona = 0;
 	if (entidad_uno.x_pos < (entidad_dos.x_pos + entidad_dos.ancho) &&
 		(entidad_uno.x_pos + entidad_uno.ancho) > entidad_dos.x_pos &&
 		entidad_uno.y_pos < (entidad_dos.y_pos + entidad_dos.alto) &&
 		(entidad_uno.y_pos + entidad_uno.alto) > entidad_dos.y_pos)
 	{
-		colisiona = 1;
+		return 1;
 	}
-	return colisiona;
+
+	return 0;
 }
 
 // Función que usa el teorema de Pitágoras para calcular la distancia entre el centro de dos entidades.
-double distancia_entre_entidades(struct Entidad entidad_uno, struct Entidad entidad_dos)
+double
+distancia_entre_entidades(struct Entidad entidad_uno, struct Entidad entidad_dos)
 {
 	// Calculando la distancia entre el proyectil y el jugador
 	float dis_x = (entidad_uno.x_pos +
-				   (entidad_uno.ancho / 2)) -
-					(entidad_dos.x_pos + (entidad_dos.ancho / 2));
+		(entidad_uno.ancho / 2)) -
+		(entidad_dos.x_pos + (entidad_dos.ancho / 2));
 	float dis_y = (entidad_uno.y_pos +
-				   (entidad_uno.alto / 2)) -
-				   (entidad_dos.y_pos + (entidad_dos.alto / 2));
+		(entidad_uno.alto / 2)) -
+		(entidad_dos.y_pos + (entidad_dos.alto / 2));
 	double dis_total = pow((dis_x * dis_x) + (dis_y * dis_y), 0.5);
 
 	return dis_total;
 }
 
 // Se encarga de reducir la vida de dos entidades en caso de que colisionen, regresa un entero representando si se encuentran colisiones.
-int entidades_reducir_vida_si_colisionan(struct Entidad *entidad_uno, struct Entidad *entidad_dos, int *marcar_como_danado)
+int
+entidades_reducir_vida_si_colisionan(struct Entidad *entidad_uno, struct Entidad *entidad_dos, int *marcar_como_danado)
 {
 	int colisionaron = 0;
 
@@ -479,7 +494,7 @@ int entidades_reducir_vida_si_colisionan(struct Entidad *entidad_uno, struct Ent
 			*marcar_como_danado = 1;
 		}
 
-		entidad_uno->vidas --;
+		entidad_uno->vidas--;
 		entidad_dos->vidas--;
 
 		colisionaron = 1;
@@ -489,7 +504,8 @@ int entidades_reducir_vida_si_colisionan(struct Entidad *entidad_uno, struct Ent
 
 
 // Aquí se inicializa cada uno de los modos del juego.
-void modo_inicializar(struct Entidad entidades[], int *contador, int modo,	struct Entidad *jugador)
+void
+modo_inicializar(struct Entidad entidades[], int *contador, int modo, struct Entidad *jugador)
 {
 	switch (modo)
 	{
@@ -555,35 +571,34 @@ void modo_inicializar(struct Entidad entidades[], int *contador, int modo,	struc
 
 
 // Abre el archivo donde se guardan los puntajes, lee y regresa el puntaje guarado ahí.
-int puntaje_mas_alto_obtener()
+int
+puntaje_mas_alto_obtener(void)
 {
 	int puntaje = 0;
-
-
 	FILE *puntaje_archivo = fopen("puntaje.uwu", "rb");
+
 	if (puntaje_archivo == NULL)
-	{
 		printf("Error al cargar el archiv\n");
-	}
 	else
-	{
 		fread(&puntaje, sizeof(int), 1, puntaje_archivo);
-	}
+
 	fclose(puntaje_archivo);
 
 	return puntaje;
 }
 
 // Abre el archivo donde se guardan los puntajes, y escribe ahí el puntaje que recibió como parámetro de entrada.
-void puntaje_mas_alto_guardar(int puntaje)
+void
+puntaje_mas_alto_guardar(int puntaje)
 {
-
 	FILE *puntaje_archivo = fopen("puntaje.uwu", "wb");
+
 	if (puntaje_archivo == NULL)
 	{
 		printf("Error al cargar el archivo\n");
 		return;
 	}
+
 	rewind(puntaje_archivo);
 	fwrite(&puntaje, sizeof(int), 1, puntaje_archivo);
 	fclose(puntaje_archivo);
